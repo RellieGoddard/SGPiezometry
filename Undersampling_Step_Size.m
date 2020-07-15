@@ -13,7 +13,7 @@
 %           direname: equivalent to  pname
 %           sample_name: equivalent to fname but without the .ctf.
 %           Title: Title for figure 
-%           Header_size: Number of lines, up to and including the line starting with ‘phase’ in the .ctf file (open in Notepad)
+%           Header_size: Number of lines, up to and including the line starting with â€˜phaseâ€™ in the .ctf file (open in Notepad)
 %           gb_min & sg_min: grain size and subgrain size, used for constructing maps
 %           cutoff: minimum misorientation angle used to define a subgrain boundary, if using Goddard subgrain-size piezometer cuttoff = 1. 
 %           phase: the phase you want to measure subgrains in 
@@ -88,9 +88,6 @@ Band_contrast = [];
 Input_CTF = [dirname sample_name '.ctf'];
 A = importdata(Input_CTF);
 [fname_new, stepx_all, Step_size_SG_size] = undersampling_fun(Int_max, dirname, sample_name, header_size,gb_min,sg_min,test, Phase_map, Band_contrast, nx, ny, cutoff, phase, crystal);
-
-save('stepx_all_264','stepx_all');
-save('Step_size_SG_size_264','Step_size_SG_size');
 
 close all 
 
