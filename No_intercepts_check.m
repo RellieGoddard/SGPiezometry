@@ -17,9 +17,8 @@
 %           test: choice to run a smaller area to speed up the script. Good for testing if the script works, not recommended for analysis
 
 % Outputs: 
-%   figures showing the line intercepts ontop of EBSD data for each interation, figure showing the mean line intercept length against the No. of
-%   intercepts, figure showing the change in mean line intercept length
-%   relative to last
+%   figures showing the line intercepts on top of EBSD data for each iteration, a figure showing the mean line intercept length against the No. of
+%   intercepts, and a figure showing the change in mean line intercept length relative to last
 
 
 % The test is successful if the measured mean line-intercept length stabilises (change in intercept length relative to last is < or = 2.5%). 
