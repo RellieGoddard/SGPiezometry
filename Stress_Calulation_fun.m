@@ -1,13 +1,15 @@
+%% ProcessEBSD_fun - imports and processes EBSD data 
+% Rellie Goddard, July 2020
 % Create a function in order to get the equivalent stress from a subgrain
 % size. 
-function [Equivalent_stress] = Stress_Calulation_fun(phase,Peizometer_choice,a_mean_RG);
-if Peizometer_choice == 1
+function [Equivalent_stress] = Stress_Calulation_fun(phase,Piezometer_choice,a_mean_RG)
+
+if Piezometer_choice == 1
     ParA = 0.6;
     ParA_err = (0.7/2); 
     ParB = -1.2;
     ParB_err = (0.3/2); 
-    
-elseif Peizometer_choice == 2
+elseif Piezometer_choice == 2
     ParA = 1.2;
     ParA_err = (1/2); 
     ParB = -1.0;

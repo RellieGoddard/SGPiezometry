@@ -1,5 +1,5 @@
 %% ProcessEBSD_fun - imports and processes EBSD data 
-% Rellie Goddard, July 2019
+% Rellie Goddard, July 2020
 %% User input %%
 % Edit 'CS =...', phases have to be in the same order as the .cpr file. In
 % order to get CS information: 
@@ -11,25 +11,22 @@
 %   into the section below labeled '% crystal symmetry'. 
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-function [ebsd,grains,subgrains] = ProcessEBSD_fun(fname, gb_min,sg_min, phase, test, Phase_map, Band_contrast)
+function [ebsd,grains,subgrains] = ProcessEBSD_fun(fullname, gb_min, sg_min, test, Phase_map, Band_contrast)
 %% Specify Crystal and Specimen Symmetries
 
-% crystal symmetry
 % crystal symmetry
 CS = {... 
   'notIndexed',...
   crystalSymmetry('mmm', [4.756 10.207 5.98], 'mineral', 'Forsterite', 'color', 'light blue')};
 
-
-
 % plotting convention
 plotx2east
 plotzIntoPlane
 
-% Import the Data
+%% Import the Data
 % create an EBSD variable containing the data
 % can change to ctf file 
-ebsd = loadEBSD([fname],CS,'interface','ctf','convertEuler2SpatialReferenceFrame');
+ebsd = loadEBSD(fullname,CS,'interface','ctf','convertEuler2SpatialReferenceFrame');
 ebsd_orig = ebsd; %a backup of the original data
 
 if test 

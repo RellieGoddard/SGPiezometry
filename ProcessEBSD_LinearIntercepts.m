@@ -6,7 +6,7 @@
 % Required user inputs:
 %       pname, fname,  gb_min, sg_min, cutoff, phase, crystal, nx, test,
 %       Phase_map, Band_contrast, Check_different_misorientation, 
-%       SG_piezometer, Peizometer_choice
+%       SG_piezometer, Piezometer_choice
 %           pname & fname: file path and file name, including .ctf
 %           gb_min & sg_min: grain size and subgrain size, used for constructing maps
 %           cutoff: minimum misorientation angle used to define a subgrain boundary, if using Goddard subgrain-size piezometer cuttoff = 1. 
@@ -111,31 +111,24 @@ Lengths_Y_1 =[];
 %% Linear intercept analysis 
 
 if Check_different_misorientation == 1
-
-for cutoff = 1:1:10;
-   
-  Mis_orientation = [Mis_orientation, cutoff];
-  [Mean_Lengths_X,Mean_Lengths_Y, lengths_x, lengths_y] = LinearIntercepts_fun(ebsd,nx,ny,cutoff,phase,crystal);
-  store = [];
-  store = [lengths_x;lengths_y];
-  Subgrain_mis_ori = [Subgrain_mis_ori, (sum(store)/length(store))];
-
-  
-  if cutoff == 1;
-      Lengths_X_1 = [Lengths_X_1, lengths_x];
-      Lengths_Y_1 = [Lengths_Y_1, lengths_y];
-  end 
- 
- 
-end
+    for cutoff = 1:1:10
+      Mis_orientation = [Mis_orientation, cutoff];
+      [Mean_Lengths_X,Mean_Lengths_Y, lengths_x, lengths_y] = LinearIntercepts_fun(ebsd,nx,ny,cutoff,phase,crystal);
+      store = [];
+      store = [lengths_x;lengths_y];
+      Subgrain_mis_ori = [Subgrain_mis_ori, (sum(store)/length(store))];
+      if cutoff == 1
+          Lengths_X_1 = [Lengths_X_1, lengths_x];
+          Lengths_Y_1 = [Lengths_Y_1, lengths_y];
+      end 
+    end
 
     % Add a line of best fit 
-    MA = [0];
-    SG = [0];
-  
+    MA = 0;
+    SG = 0;
     for a = 1:10
-     MA(end+1) = Mis_orientation(a);
-     SG(end+1) = Subgrain_mis_ori(a);
+        MA(end+1) = Mis_orientation(a);
+        SG(end+1) = Subgrain_mis_ori(a);
     end 
 
     figure
@@ -149,7 +142,7 @@ end
     hold on 
     ylim = ([0 2*ylim_old]);
     hold on 
-    % Adding labels
+    % Add labels
     xlabel('Minimum misorientation angle ({\circ})')
     ylabel('\it\lambda\it (\mum)')
     hold on 
@@ -192,11 +185,11 @@ box on
 
 
 % Getting a stress from your the piezometer
-if SG_piezometer == 1; 
+if SG_piezometer == 1
 [Equivalent_stress] = Stress_Calulation_fun(phase,Peizometer_choice,a_mean_RG);
 
 % Print Von Mises Equilivant_Stress 
-Equivalent_stress
+disp(Equivalent_stress)
 end 
 
 

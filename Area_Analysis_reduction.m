@@ -1,5 +1,5 @@
 %% Area_Analysis_reduction - map size test
-% Rellie Goddard, July 2019
+% Rellie Goddard, July 2020
 % Required functions:
 % *ProcessEBSD_fun.m
 % *LinearIntercepts_fun.m
