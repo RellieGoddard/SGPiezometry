@@ -68,8 +68,9 @@ if Phase_map
     hold on
     plot(subgrains.boundary('indexed'),'linecolor',[.6 .6 .6],'linewidth',1)
     plot(grains.boundary('indexed'),'linecolor','k','linewidth',2)
+end 
 
-elseif Band_contrast 
+if Band_contrast 
     % band contrast map with boundaries
     figure
     plot(ebsd_orig,ebsd_orig.bc)
