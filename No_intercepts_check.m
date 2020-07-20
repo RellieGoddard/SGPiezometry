@@ -1,26 +1,39 @@
-%% No_intercepts_check - tests the number of intercepts required to acurately capture the subgrain-size
+%% No_intercepts_check 
 % Rellie Goddard, July 2020
+
+% This function checks the number of intercepts required to acurately capture the subgrain-size
+
 % Required functions:
 % *ProcessEBSD_fun.m
 % *LinearIntercepts_fun.m
 
 % Required user inputs:
-%       name, fname, gb_min, sg_min, cutoff, phase, crystal, nx_max,
-%       include_low, test
-%           pname & fname: file path and file name, including .ctf
-%           gb_min & sg_min: grain size and subgrain size, used for constructing maps
-%           cutoff: minimum misorientation angle used to define a subgrain boundary, if using Goddard subgrain-size piezometer cuttoff = 1. 
-%           phase: the phase you want to measure subgrains in 
-%           crystal: crystal system on the phase in question 
-%           nx_max: the maximum number of intercepts that you want to test (recommended to start at 30 intercepts)
-%           include_low: choice if you want to test very low number of intercepts (1-9)
-%           test: choice to run a smaller area to speed up the script. Good for testing if the script works, not recommended for analysis
 
-% Outputs: 
+% * pname: Path to data (e.g., 'C:/Users/admin/data/')
+% * fname: File name with extension (e.g., 'W1066.ctf')
+% * gb_min: Grain size, used for constructing maps.
+% * sg_min: Subgrain size, used for constructing maps
+% * cutoff: Minimum misorientation angle used to define a subgrain boundary.
+%       If using recommended Goddard subgrain-size piezometer parameters,
+%       set to 1.
+% * CS: crystal symmetry. Phases have to be in the same order as the .cpr file. 
+%       Can be added manually or CS information can be obtained through using the 
+%       command 'import_wizard'. In inport_wizard choose the EBSD tab, click on the '+'
+%       botton to upload the .ctf file of intrest. Navigate through until you finish, 
+%       this will create an untitled script. Copy the '% crystal symmetry' section of
+%       the script into the section below labeled '% crystal symmetry'. 
+% * phase: Name of the phase of interest (e.g., 'olivine')
+% * crystal: Crystal system of the phase to be examined (e.g., 'orthorhombic')
+% * nx_max: The maximum number of intercepts that you want to test (recommended to start at either 30 or 40)
+% * include_low: The choice of if you want to test very low number of intercepts (1-9). To include set to 1. Othewise, set to 0.
+% * test: the choice to run a smaller area to speed up the analysis. Good for 
+%       testing if the script works, not recommended for analysis. 
+%       To run a smaller data set, set to 1. Othewise, set to 0
+%
+% Results: 
 %   figures showing the line intercepts on top of EBSD data for each iteration, a figure showing the mean line intercept length against the No. of
 %   intercepts, and a figure showing the change in mean line intercept length relative to last
-
-
+%
 % The test is successful if the measured mean line-intercept length stabilises (change in intercept length relative to last is < or = 2.5%). 
 % If the mean line-intercept does not stabilise, increase nx_max and run again. 
 
@@ -40,34 +53,39 @@ pname = 'yourPath\';
 
 fname = [pname 'yourFileName.ctf'];
 
-%% Define the parameters 
-
 % USER INPUT: misorientation angles for SG and GS and cutoff for SG_piezometer
-% For the Goddard 2019 subgrain piezometer set sg_min and cutoff to 1 degree. 
+% For the Goddard 2020 subgrain piezometer set sg_min and cutoff to 1 degree. 
 
 gb_min = [];
 sg_min = [];
 cutoff =  [];
 
+% USER INPUT: Crystal symmetry 
+CS =  {... 
+  'notIndexed',...
+  crystalSymmetry('mmm', [UnitCellLengths(?)], 'mineral', 'yourPhase', 'color', 'yourColor')};
 
 % USER INPUT Phase, must match that in the CS file.
-
 phase = 'yourPhase';
 
 % USER INPUT: Crystal system 
-
-%  Common crystal systems 
-% 'Quartz = trigonal'   'Calcite = trigonal'    
-% 'Enstatite  Opx AV77 = orthorhombic'  'Forsterite = orthorhombic'
-
 crystal = 'yourCrystalSystem';
 
 
-% USER INPUT: Max number of intercepts to try. Must be multiple of 10. Suggested: 30-40
+% USER INPUT: Max number of intercepts to try. Must be multiple of 10. Suggested starting value, 30 or 40
 nx_max = [];
 
-% USER INPUT: to include analysis of 1 to 9 intercepts. Yes = 1, No = 0
+% USER INPUT: test 
+% To run a smaller data set, set to 1. Othewise, set to 0
+test = [];
+
+% USER INPUT: to include analysis, set to 1. Otherwise, set to 0
 include_low = []; 
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Run test 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 % create an array to keep data in
 if include_low
@@ -81,11 +99,9 @@ else
     Y = zeros([1, nx_max/10]);
 end
 
-% USER INPUT: Test a smaller dataset, Yes = 1, No = 0
-test = [0];
 
 %%  Call on the ProcessEBSD function. This function will output [enter the maps which I want it to output]
-[ebsd,grains,subgrains] = ProcessEBSD_fun(fname,gb_min,sg_min, phase, test, 0, 0);
+[ebsd,grains,subgrains] = ProcessEBSD_fun(fname,gb_min,sg_min, CS, test, 0, 0);
 
 if include_low
     for nx = 1:1:9
