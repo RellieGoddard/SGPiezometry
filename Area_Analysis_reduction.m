@@ -40,7 +40,7 @@
 %   On the right axis of the same figure the % change of the mean line intercepts length relative to the full map is plotted against map area. 
 %
 % The test is successful if, as the size of the sub-area increases, the mean intercept length asymptotically approaches the mean for the entire map.  
-% For all the samples included in the subgrain-size piezometer, the % change in mean line intercept length relative to the full map was ? 5% for a 20% reduction in map area. 
+% For all the samples included in the subgrain-size piezometer, the % change in mean line intercept length relative to the full map was < 5% for a 20% reduction in map area. 
 % If the mean line intercept length changes significantly with the reduced map size more maps or larger maps are required to accurately capture the subgrain size. 
 
 
