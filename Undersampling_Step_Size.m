@@ -14,9 +14,9 @@
 %       No_intercepts_check.m.
 % * Int_max: The number of times you want to increase the step-size. The 
 %       step-size at an iteration will be Int_max multiplied by the original
-%       step-size. 
-% * dirname: Path to data (e.g., 'C:/Users/admin/data')
-% * sample_name: File name with no extension (e.g., 
+%       step-size. For each iteration a .ctf file will be created. 
+% * dirname: Path to data (e.g., 'C:/Users/admin/data/')
+% * sample_name: File name with no extension (e.g., 'W1066')
 % * title: Title for figure 
 % * Header_size: Number of lines, up to and including the line starting with
 %       "phase" in the .ctf file (as seen if opened in a text editor)
@@ -25,8 +25,17 @@
 % * cutoff: Minimum misorientation angle used to define a subgrain boundary.
 %       If using recommended Goddard subgrain-size piezometer parameters,
 %       set to 1.
+% * CS: crystal symmetry. Phases have to be in the same order as the .cpr file. 
+%       Can be added manually or CS information can be obtained through using the 
+%       command 'import_wizard'. In inport_wizard choose the EBSD tab, click on the '+'
+%       botton to upload the .ctf file of intrest. Navigate through until you finish, 
+%       this will create an untitled script. Copy the '% crystal symmetry' section of
+%       the script into the section below labeled '% crystal symmetry'. 
 % * phase: Name of the phase of interest (e.g., 'olivine')
 % * crystal: Crystal system of the phase to be examined (e.g., 'orthorhombic')
+% * test: the choice to run a smaller area to speed up the analysis. Good for 
+%       testing if the script works, not recommended for analysis. 
+%       To run a smaller data set, set to 1. Othewise, set to 0
 % * Phase_map: To output a phase map, set to 1. Othewise, set to 0.
 % * Band_contrast: To output a band contrast map, set to 1. Otherwise, set
 %       to 0.
@@ -77,29 +86,36 @@ gb_min = [];
 sg_min = [];
 cutoff = []; 
 
+% USER INPUT: Crystal symmetry 
+CS =  {... 
+  'notIndexed',...
+  crystalSymmetry('mmm', [UnitCellLengths(?)], 'mineral', 'yourPhase', 'color', 'yourColor')};
+
 % USER INPUT: Phase, must match that in the CS file.
 
 phase = 'yourPhase';
 
 % USER INPUT: Crystal system 
 
-%  Common crystal systems 
-% 'Quartz = trigonal'   'Calcite = trigonal'    
-% 'Enstatite  Opx AV77 = orthorhombic'  'Forsterite = orthorhombic'
-
 crystal = 'yourCrystalSystem';
-% test, if you want to do a smaller data set to test the code 1 = YES, 0 =
-% NO
+
+% USER INPUT: test 
+% To run a smaller data set, set to 1. Othewise, set to 0
 
 test = [];
 
-% Following figures will be created if 1 and not if 0
+% USER INPUT: figure outputs 
+% To output either a phase map or a band contrast map, set to 1. Othewise, set to 0
 Phase_map = [];
 Band_contrast = [];
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Conduct step-size test
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
+
 Input_CTF = [dirname sample_name '.ctf'];
 A = importdata(Input_CTF);
-[fname_new, stepx_all, Step_size_SG_size] = undersampling_fun(Int_max, dirname, sample_name, header_size,gb_min,sg_min,test, Phase_map, Band_contrast, nx, ny, cutoff, phase, crystal);
+[fname_new, stepx_all, Step_size_SG_size] = undersampling_fun(Int_max, dirname, sample_name, header_size,gb_min,sg_min,test, Phase_map, Band_contrast, nx, ny, cutoff, phase, crystal, CS);
 
 close all 
 
