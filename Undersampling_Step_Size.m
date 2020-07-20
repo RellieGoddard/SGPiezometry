@@ -17,7 +17,7 @@
 %       step-size. For each iteration a .ctf file will be created. 
 % * dirname: Path to data (e.g., 'C:/Users/admin/data/')
 % * sample_name: File name with no extension (e.g., 'W1066')
-% * title: Title for figure 
+% * Image_title: Title for figure 
 % * Header_size: Number of lines, up to and including the line starting with
 %       "phase" in the .ctf file (as seen if opened in a text editor)
 % * gb_min: Grain size, used for constructing maps.
@@ -125,4 +125,4 @@ figure
     set(gca,'fontsize',15);
     ylabel('Intercept variation factor ,\bf\lambda\rm/\bf\lambda\rm_b_e_s_t', 'FontSize',15);
     xlabel('Pixels per intercept, \bf\lambda\rm_b_e_s_t/step size', 'FontSize', 15);
-    title(title, 'FontSize', 15)
+    title(Image_title, 'FontSize', 15)
