@@ -1,27 +1,44 @@
-%% Area_Analysis_reduction - map size test
+%% Area_Analysis_reduction - test to see if the map size is large enough
 % Rellie Goddard, July 2020
-% Required functions:
-% *ProcessEBSD_fun.m
-% *LinearIntercepts_fun.m
-% Required user inputs:
-%       pname, fname, gb_min, sg_min, cutoff, phase, crystal, nx, test, Phase_map, Band_contrast
-%           pname & fname: file path and file name, including .ctf
-%           gb_min & sg_min: grain size and subgrain size, used for constructing maps
-%           cutoff: minimum misorientation angle used to define a subgrain boundary, if using Goddard subgrain-size piezometer cuttoff = 1. 
-%           phase: the phase you want to measure subgrains in 
-%           crystal: crystal system on the phase in question
-%           nx: no. of line intercepts, chosen based on analysis from No_intercepts_check.m.
-%           test: choice to run a smaller area to speed up the script. Good for testing if the script works, not recommended for analysis        
-%           Phase_map: to output a phase map = 1 if not = 0
-%           Band_contrast: to output a band contrast map = 1 if not = 0 
 
-% OUTPUTs 
+% This function examines how the effective map size affects
+% the mean line intercept length of a given phase in the map.
+
+%% Required functions:
+% * ProcessEBSD_fun.m
+% * LinearIntercepts_fun.m
+
+%% Required user inputs:
+% * nx: The number of intercept lines, chosen based on analysis from 
+%       No_intercepts_check.m.
+% * pname: Path to data (e.g., 'C:/Users/admin/data/')
+% * fname: File name with no extension (e.g., 'W1066')
+% * gb_min: Grain size, used for constructing maps.
+% * sg_min: Subgrain size, used for constructing maps
+% * cutoff: Minimum misorientation angle used to define a subgrain boundary.
+%       If using recommended Goddard subgrain-size piezometer parameters,
+%       set to 1.
+% * CS: crystal symmetry. Phases have to be in the same order as the .cpr file. 
+%       Can be added manually or CS information can be obtained through using the 
+%       command 'import_wizard'. In inport_wizard choose the EBSD tab, click on the '+'
+%       botton to upload the .ctf file of intrest. Navigate through until you finish, 
+%       this will create an untitled script. Copy the '% crystal symmetry' section of
+%       the script into the section below labeled '% crystal symmetry'. 
+% * phase: Name of the phase of interest (e.g., 'olivine')
+% * crystal: Crystal system of the phase to be examined (e.g., 'orthorhombic')
+% * test: the choice to run a smaller area to speed up the analysis. Good for 
+%       testing if the script works, not recommended for analysis. 
+%       To run a smaller data set, set to 1. Othewise, set to 0
+% * Phase_map: To output a phase map, set to 1. Othewise, set to 0.
+% * Band_contrast: To output a band contrast map, set to 1. Otherwise, set
+%       to 0
+%
+% Results 
 %   An EBSD map for each analysis is outputted with a red box outlining the analysed subarea. 
 %   A figure showing the intercept analysis of the final subarea. 
 %   A figure showing the mean line intercept length plotted against the area as a percentage of the original map. 
 %   On the right axis of the same figure the % change of the mean line intercepts length relative to the full map is plotted against map area. 
-% 
-
+%
 % The test is successful if, as the size of the sub-area increases, the mean intercept length asymptotically approaches the mean for the entire map.  
 % For all the samples included in the subgrain-size piezometer, the % change in mean line intercept length relative to the full map was ? 5% for a 20% reduction in map area. 
 % If the mean line intercept length changes significantly with the reduced map size more maps or larger maps are required to accurately capture the subgrain size. 
@@ -54,37 +71,46 @@ sg_min = [];
 cutoff = []; 
 
 
+% USER INPUT: Crystal symmetry 
+CS =  {... 
+  'notIndexed',...
+  crystalSymmetry('mmm', [UnitCellLengths(?)], 'mineral', 'yourPhase', 'color', 'yourColor')};
+
+
 % USER INPUT Phase, must match that in the CS file.
 
 phase = 'yourPhase';
 
 % USER INPUT: Crystal system 
 
-%  Common crystal systems 
-% 'Quartz = trigonal'   'Calcite = trigonal'    
-% 'Enstatite  Opx AV77 = orthorhombic'  'Forsterite = orthorhombic'
-
 crystal = 'yourCrystalSystem';
+
 
 %USER INPUT: Number of intercepts
 nx = [];
 ny = nx;
 
 
-% USER INPUT: Test a smaller dataset, Yes = 1, No = 0
+% USER INPUT: test 
+% To run a smaller data set, set to 1. Othewise, set to 0
+
 test = [];
 
-% USER INPUT: Figures to be created, Yes = 1, No = 0
+% USER INPUT: figure outputs 
+% To output either a phase map or a band contrast map, set to 1. Othewise, set to 0
 Phase_map = [];
 Band_contrast = [];
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Conduct test
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 % Creat an array to store the mean line intercept lengths in
 Mean_SG_size_area = zeros(1,10); 
 
 
 % Call on the ProcessEBSD function. This function will output [enter the maps which I want it to output]
-[ebsd,grains,subgrains] = ProcessEBSD_fun(fname,gb_min,sg_min, phase, test, Phase_map, Band_contrast);
+[ebsd,grains,subgrains] = ProcessEBSD_fun(fname,gb_min,sg_min, CS, test, Phase_map, Band_contrast);
 
 %% Reduce the area used to mean mean line intercepts from 
 
