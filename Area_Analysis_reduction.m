@@ -12,7 +12,7 @@
 % * nx: The number of intercept lines, chosen based on analysis from 
 %       No_intercepts_check.m.
 % * pname: Path to data (e.g., 'C:/Users/admin/data/')
-% * fname: File name with no extension (e.g., 'W1066')
+% * fname: File name with extension (e.g., 'W1066.ctf')
 % * gb_min: Grain size, used for constructing maps.
 % * sg_min: Subgrain size, used for constructing maps
 % * cutoff: Minimum misorientation angle used to define a subgrain boundary.
