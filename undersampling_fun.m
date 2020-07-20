@@ -1,7 +1,7 @@
 %% ProcessEBSD_fun - imports and processes EBSD data 
 % Rellie Goddard, July 2020
 
-function [fname_new, stepx_all, Step_size_SG_size] = undersampling_fun(Int_max, dirname, sample_name, header_size,gb_min,sg_min,test, Phase_map, Band_contrast, nx, ny, cutoff, phase, crystal);
+function [fname_new, stepx_all, Step_size_SG_size] = undersampling_fun(Int_max, dirname, sample_name, header_size,gb_min,sg_min,test, Phase_map, Band_contrast, nx, ny, cutoff, phase, crystal,CS);
 
 Step_size_SG_size = [];
 stepx_all = [];
@@ -60,7 +60,7 @@ fprintf(fileid,'%s\r\n',data_new{:,:})
 fclose(fileid)
 
 fname = [fname_new '.ctf'];
-[ebsd,grains,subgrains] = ProcessEBSD_fun(fname,gb_min,sg_min, phase, test, Phase_map, Band_contrast);
+[ebsd,grains,subgrains] = ProcessEBSD_fun(fname,gb_min,sg_min, phase, CS, test, Phase_map, Band_contrast);
 [Mean_Lengths_X,Mean_Lengths_Y, lengths_x, lengths_y] = LinearIntercepts_fun(ebsd,nx,ny,cutoff,phase,crystal);
 
 d_h = lengths_x;
