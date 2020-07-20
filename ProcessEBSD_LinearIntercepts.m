@@ -23,7 +23,7 @@
 %       botton to upload the .ctf file of intrest. Navigate through until you finish, 
 %       this will create an untitled script. Copy the '% crystal symmetry' section of
 %       the script into the section below labeled '% crystal symmetry'. 
-% * phase: Name of the phase of interest (e.g., 'olivine')
+% * phase: Name of the phase of interest (e.g., 'Forsterite')
 % * crystal: Crystal system of the phase to be examined (e.g., 'orthorhombic')
 % * test: the choice to run a smaller area to speed up the analysis. Good for 
 %       testing if the script works, not recommended for analysis. 
