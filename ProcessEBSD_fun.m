@@ -1,23 +1,9 @@
 %% ProcessEBSD_fun - imports and processes EBSD data 
 % Rellie Goddard, July 2020
-%% User input %%
-% Edit 'CS =...', phases have to be in the same order as the .cpr file. In
-% order to get CS information: 
-%   1) use comand import_wizard 
-%   2) click on the EBSD tab
-%   3) click the '+' botton navigate to the .ctf file 
-%   4) Navigate through until you finish, this will create an
-%   untitled script. Cppy the '% crystal symmetry' section of the script
-%   into the section below labeled '% crystal symmetry'. 
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-function [ebsd,grains,subgrains] = ProcessEBSD_fun(fullname, gb_min, sg_min, test, Phase_map, Band_contrast)
+function [ebsd,grains,subgrains] = ProcessEBSD_fun(fullname, gb_min, sg_min, CS, test, Phase_map, Band_contrast)
 %% Specify Crystal and Specimen Symmetries
-
-% crystal symmetry
-CS = {... 
-  'notIndexed',...
-  crystalSymmetry('mmm', [4.756 10.207 5.98], 'mineral', 'Forsterite', 'color', 'light blue')};
 
 % plotting convention
 plotx2east
