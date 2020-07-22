@@ -24,7 +24,7 @@
 %       degrees. Only used for constructing maps.
 % * cutoff: Minimum misorientation angle to define a subgrain boundary in
 %       degrees. Used for piezometer calculations. Recommended value is 1.
-% * phase: Name of the phase of interest (e.g., 'olivine')
+% * phase: Name of the phase of interest (e.g., 'Forsterite')
 % * crystal: Crystal system of the phase to be examined (e.g., 'orthorhombic')
 % * test: % test: When set to 1, reduces the size of the input EBSD map by taking
 %       every tenth pixel in both the horizontal and vertical direction. Can be 
