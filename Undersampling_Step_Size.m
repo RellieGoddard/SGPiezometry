@@ -26,7 +26,7 @@
 %       degrees. Used for piezometer calculations. Recommended value is 1.
 % * phase: Name of the phase of interest (e.g., 'Forsterite')
 % * crystal: Crystal system of the phase to be examined (e.g., 'orthorhombic')
-% * test: % test: When set to 1, reduces the size of the input EBSD map by taking
+% * test: When set to 1, reduces the size of the input EBSD map by taking
 %       every tenth pixel in both the horizontal and vertical direction. Can be 
 %       utilized to ensure the script runs correctly for a new sample file or for
 %       troubleshooting. During full analysis, test should be set to 0.
@@ -37,7 +37,7 @@
 %% Additional user inputs produced by MTEX
 % * CS: Crystal symmetry class variable for all indexed phaes in EBSD map.
 % * pname: Path to data (e.g., 'C:/Users/admin/data/')
-% * fname: File name  combined with path
+% * fname: File name combined with path
 %
 %% Results
 % A figure showing the Intercept Variation Factor plotted against the number 
