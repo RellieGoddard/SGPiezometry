@@ -1,5 +1,5 @@
 %% Area_Analysis_reduction - test to see if the map size is large enough
-% Rellie Goddard, July 2020
+% Rellie M. Goddard, July 2020
 
 % This function examines how the effective map size affects
 % the mean line intercept length of a given phase in the map.
@@ -11,27 +11,26 @@
 %% Required user inputs:
 % * nx: The number of intercept lines, chosen based on analysis from 
 %       No_intercepts_check.m.
-% * pname: Path to data (e.g., 'C:/Users/admin/data/')
-% * fname: File name with extension (e.g., 'W1066.ctf')
-% * gb_min: Grain size, used for constructing maps.
-% * sg_min: Subgrain size, used for constructing maps
-% * cutoff: Minimum misorientation angle used to define a subgrain boundary.
-%       If using recommended Goddard subgrain-size piezometer parameters,
-%       set to 1.
-% * CS: crystal symmetry. Phases have to be in the same order as the .cpr file. 
-%       Can be added manually or CS information can be obtained through using the 
-%       command 'import_wizard'. In inport_wizard choose the EBSD tab, click on the '+'
-%       botton to upload the .ctf file of intrest. Navigate through until you finish, 
-%       this will create an untitled script. Copy the '% crystal symmetry' section of
-%       the script into the section below labeled '% crystal symmetry'. 
-% * phase: Name of the phase of interest (e.g., 'olivine')
+% * gb_min: Minimum misorientation angle to define a grain boundary in 
+%       degrees. Used for constructing maps
+% * sg_min: Minimum misorientation angle to define a subgrain boundary in 
+%       degrees. Only used for constructing maps.
+% * cutoff: Minimum misorientation angle to define a subgrain boundary in
+%       degrees. Used for piezometer calculations. Recommended value is 1.
+% * phase: Name of the phase of interest (e.g., 'Forsterite')
 % * crystal: Crystal system of the phase to be examined (e.g., 'orthorhombic')
-% * test: the choice to run a smaller area to speed up the analysis. Good for 
-%       testing if the script works, not recommended for analysis. 
-%       To run a smaller data set, set to 1. Othewise, set to 0
+% * test: When set to 1, reduces the size of the input EBSD map by taking
+%       every tenth pixel in both the horizontal and vertical direction. Can be 
+%       utilized to ensure the script runs correctly for a new sample file or for
+%       troubleshooting. During full analysis, test should be set to 0.
 % * Phase_map: To output a phase map, set to 1. Othewise, set to 0.
 % * Band_contrast: To output a band contrast map, set to 1. Otherwise, set
 %       to 0
+%
+%% Additional user inputs produced by MTEX
+% * CS: Crystal symmetry class variable for all indexed phaes in EBSD map.
+% * pname: Path to data (e.g., 'C:/Users/admin/data/')
+% * fname: File name  combined with path
 %
 % Results 
 %   An EBSD map for each analysis is outputted with a red box outlining the analysed subarea. 
@@ -47,67 +46,43 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% Data import
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-close all 
-clear all 
+close, clear all 
 
-% Specify File Names
+% USER INPUT: Data inport information from MTEX
+% This information is produced automatically by the MTEX import wizard 
+% Paste in your CS, plotting conventions, pname, and fname here. 
 
-% USER INPUT: Enter file path 
-% File location 
+% Specify Crystal and Specimen Symmetries 
+% crystal symmetry
+CS =  {};
+% plotting convention
+setMTEXpref('xAxisDirection','east');
+setMTEXpref('zAxisDirection','outOfPlane');
 
-pname = 'yourPath\';
-
-% USER INPUT: Enter .ctf file name (including the .ctf)
+% Specify File Names 
+% path to file 
+pname = 'yourPath';
+% which file to be imported  
 fname = [pname 'yourFileName.ctf'];
 
+%% USER INPUT: Required information 
+nx = []; % Number of intercept lines 
+gb_min = []; % Minimum misorientation for grain boundary (for figures)
+sg_min = []; % Minimum misorientation for subgrain boundary (for figures)
+cutoff = []; % Minimum misorientation for subgrain boundary (for calculation)
+phase = 'yourPhase'; % Phase to measure. Must match a phase present in CS.
+crystal = 'yourCrystalSystem'; % Crystal system of phase to measure. 
+Phase_map = 0; % Set to 1 to plot a phase map of the EBSD data. 
+Band_contrast = 0; % Set to 1 to plot a band contrast map.
+test = 0; % Set to 1 to speed up analysis when troubleshooting. 
 
-%% Define the parameters 
+%% END OF USER INPUTS 
 
-% USER INPUT: misorientation angles for SG and GS and cutoff for SG_piezometer
-% For the Goddard 2019 subgrain piezometer set sg_min and cutoff to 1 degree. 
+%% Programmatically calculate other necessary variables 
+ny = nx; % Set number of intercepts in y-direction to equal number of intercepts in the x-direction.
+Mean_SG_size_area = zeros(1,10); % Creat an array to store the mean line intercept lengths in
 
-gb_min = [];
-sg_min = [];
-cutoff = []; 
-
-
-% USER INPUT: Crystal symmetry 
-CS =  {... 
-  'notIndexed',...
-  crystalSymmetry('mmm', [UnitCellLengths(?)], 'mineral', 'yourPhase', 'color', 'yourColor')};
-
-
-% USER INPUT Phase, must match that in the CS file.
-
-phase = 'yourPhase';
-
-% USER INPUT: Crystal system 
-
-crystal = 'yourCrystalSystem';
-
-
-%USER INPUT: Number of intercepts
-nx = [];
-ny = nx;
-
-
-% USER INPUT: test 
-% To run a smaller data set, set to 1. Othewise, set to 0
-
-test = [];
-
-% USER INPUT: figure outputs 
-% To output either a phase map or a band contrast map, set to 1. Othewise, set to 0
-Phase_map = [];
-Band_contrast = [];
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%% Conduct test
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-% Creat an array to store the mean line intercept lengths in
-Mean_SG_size_area = zeros(1,10); 
-
+%% Calculate and plot 
 
 % Call on the ProcessEBSD function. This function will output [enter the maps which I want it to output]
 [ebsd,grains,subgrains] = ProcessEBSD_fun(fname,gb_min,sg_min, CS, test, Phase_map, Band_contrast);
