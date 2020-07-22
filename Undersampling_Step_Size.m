@@ -1,5 +1,5 @@
 %% Undersampling_Step_size - tests if the spatial resolution is high enough 
-% Rellie Goddard, July 2020
+% Rellie M. Goddard, July 2020
 
 % This function examines how the effective step-size of EBSD maps affects
 % the mean line intercept length of a given phase in the map.
@@ -15,30 +15,29 @@
 % * Int_max: The number of times you want to increase the step-size. The 
 %       step-size at an iteration will be Int_max multiplied by the original
 %       step-size. For each iteration a .ctf file will be created. 
-% * dirname: Path to data (e.g., 'C:/Users/admin/data/')
-% * sample_name: File name with no extension (e.g., 'W1066')
 % * Image_title: Title for figure 
 % * Header_size: Number of lines, up to and including the line starting with
 %       "phase" in the .ctf file (as seen if opened in a text editor)
-% * gb_min: Grain size, used for constructing maps.
-% * sg_min: Subgrain size, used for constructing maps
-% * cutoff: Minimum misorientation angle used to define a subgrain boundary.
-%       If using recommended Goddard subgrain-size piezometer parameters,
-%       set to 1.
-% * CS: crystal symmetry. Phases have to be in the same order as the .cpr file. 
-%       Can be added manually or CS information can be obtained through using the 
-%       command 'import_wizard'. In inport_wizard choose the EBSD tab, click on the '+'
-%       botton to upload the .ctf file of intrest. Navigate through until you finish, 
-%       this will create an untitled script. Copy the '% crystal symmetry' section of
-%       the script into the section below labeled '% crystal symmetry'. 
+% * gb_min: Minimum misorientation angle to define a grain boundary in 
+%       degrees. Used for constructing maps
+% * sg_min: Minimum misorientation angle to define a subgrain boundary in 
+%       degrees. Only used for constructing maps.
+% * cutoff: Minimum misorientation angle to define a subgrain boundary in
+%       degrees. Used for piezometer calculations. Recommended value is 1.
 % * phase: Name of the phase of interest (e.g., 'olivine')
 % * crystal: Crystal system of the phase to be examined (e.g., 'orthorhombic')
-% * test: the choice to run a smaller area to speed up the analysis. Good for 
-%       testing if the script works, not recommended for analysis. 
-%       To run a smaller data set, set to 1. Othewise, set to 0
+% * test: % test: When set to 1, reduces the size of the input EBSD map by taking
+%       every tenth pixel in both the horizontal and vertical direction. Can be 
+%       utilized to ensure the script runs correctly for a new sample file or for
+%       troubleshooting. During full analysis, test should be set to 0.
 % * Phase_map: To output a phase map, set to 1. Othewise, set to 0.
 % * Band_contrast: To output a band contrast map, set to 1. Otherwise, set
 %       to 0.
+%
+%% Additional user inputs produced by MTEX
+% * CS: Crystal symmetry class variable for all indexed phaes in EBSD map.
+% * dirname: Path to data (e.g., 'C:/Users/admin/data/')
+% * sample_name: File name with no extension (e.g., 'W1066')
 %
 %% Results
 % A figure showing the Intercept Variation Factor plotted against the number 
@@ -57,64 +56,47 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 clear, close all 
 
-%USER INPUT: Number of intercepts
-nx = [];
-ny = nx;
+%% USER INPUT: Data import information from MTEX
+% This information is produced automatically by the MTEX import wizard 
+% Paste in your CS, plotting conventions, pname, and fname here.
 
-%USER INPUT: Maximum times of reducing the step-size 
-Int_max = []; 
+% Specify Crystal and Specimen Symmetries 
+% crystal symmetry
+CS =  {};
+% plotting convention
+setMTEXpref('xAxisDirection','east');
+setMTEXpref('zAxisDirection','outOfPlane');
 
-%File Location 
+% Specify File Names 
+% path to files 
 dirname = 'yourPath';
-
-% USER INPUT: Enter .ctf file name (excluding the .ctf)
+% which files to be imported 
 sample_name = 'yourFileName';
 
-% USER INPUT: Title for graph
-title = 'yourTitle';
 
-%% Define the parameters 
-
-% USER INPUT: Header size of the original head file. Open text file. 
-header_size = []; 
-
-% USER INPUT: misorientation angles for SG and GS and cutoff for
-% SG_piezometer
-% For the Goddard 2020 subgrain piezometer set sg_min and cutoff to 1 degree. 
-
-gb_min = [];
-sg_min = [];
-cutoff = []; 
-
-% USER INPUT: Crystal symmetry 
-CS =  {... 
-  'notIndexed',...
-  crystalSymmetry('mmm', [UnitCellLengths(?)], 'mineral', 'yourPhase', 'color', 'yourColor')};
-
-% USER INPUT: Phase, must match that in the CS file.
-
+%% USER INPUT: Required information 
+nx = []; % Number of intercept lines 
+Int_max = []; % Number of times to increase the step-size
+title_text = 'yourTitle'; % Title for figures 
+header_size = []; % Number of rows in header of CTF 
 phase = 'yourPhase';
+gb_min = []; % Minimum misorientation for grain boundary (for figures)
+sg_min = []; % Minimum misorientation for subgrain boundary (for figures)
+cutoff = []; % Minimum misorientation for subgrain boundary (for calculation)
+phase = 'yourPhase'; % Phase to measure. Much match a phase present in CS.
+crystal = 'yourCrystalSystem'; % Crystal system of phase to measure. 
+Phase_map = 0; % Set to 1 to plot a phase map of the EBSD data. 
+Band_contrast = 0; % Set to 1 to plot a band contrast map.
+test = 0; % Set to 1 to speed up analysis when troubleshooting. 
 
-% USER INPUT: Crystal system 
+%% END OF USER INPUTS 
 
-crystal = 'yourCrystalSystem';
-
-% USER INPUT: test 
-% To run a smaller data set, set to 1. Othewise, set to 0
-
-test = [];
-
-% USER INPUT: figure outputs 
-% To output either a phase map or a band contrast map, set to 1. Othewise, set to 0
-Phase_map = [];
-Band_contrast = [];
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%% Conduct step-size test
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
-
+%% Programmatically calculate other necessary variables 
 Input_CTF = [dirname sample_name '.ctf'];
 A = importdata(Input_CTF);
+ny = nx; % Set number of intercepts in y-direction to equal number of intercepts in the x-direction.
+
+%% Calculate and plot 
 [fname_new, stepx_all, Step_size_SG_size] = undersampling_fun(Int_max, dirname, sample_name, header_size,gb_min,sg_min,test, Phase_map, Band_contrast, nx, ny, cutoff, phase, crystal, CS);
 
 close all 
