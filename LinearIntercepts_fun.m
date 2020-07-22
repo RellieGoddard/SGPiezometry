@@ -1,5 +1,5 @@
 %% LinearIntercepts_fun - calculate linear intercepts
-% Rellie Goddard, July 2020
+% Rellie M. Goddard, July 2020
 
 function [Mean_Lengths_X,Mean_Lengths_Y, lengths_x, lengths_y] = LinearIntercepts_fun(ebsd,nx,ny,cutoff,phase,crystal)
 
@@ -16,21 +16,21 @@ y_pos = ((max(ebsd.y)-min(ebsd.y))/nx  .*  [1:nx]) - (max(ebsd.y)-min(ebsd.y))/n
 lengths_x = [];
 for i = 1:nx
     
-    %get data along line
+    % get data along line
     stepsize = ebsd.y(2)-ebsd.y(1);
     x_line = [0:stepsize:max(ebsd.x)]';
     y_line = y_pos(i)*ones(size(x_line));
     lineebsd = ebsd(findByLocation(ebsd,[x_line y_line]));
     if isempty(lineebsd(phase)) == 0
         ind = find(lineebsd('indexed').phase == lineebsd(phase).phase(1)); %indices of primary phase
-        %preallocate orientaion vector
+        % preallocate orientaion vector
         ori = orientation('Euler',NaN(size(lineebsd('indexed'))),NaN(size(lineebsd('indexed'))),NaN(size(lineebsd('indexed'))),lineebsd(phase).CS,specimenSymmetry(crystal));
         
         ori(ind) = lineebsd(phase).orientations;%orientations of primary phase along line
         ind_2phase = find((lineebsd('indexed').phase ~= lineebsd(phase).phase(1))  + (lineebsd('indexed').phase ~= 0) > 1); %indices of secondary phases
         ori(ind_2phase) = orientation('Euler',zeros(size(ind_2phase)),zeros(size(ind_2phase)),zeros(size(ind_2phase)),lineebsd(phase).CS,specimenSymmetry(crystal)); %dummy orientations for secondary phases along line
         
-        %find coordinates of intercepts
+        % find coordinates of intercepts
         angles = angle(ori(1:end-1),ori(2:end))/degree; %misorienatation angles along line
         ind1 = find(angles>cutoff);
         ind2 = ind1+1;
@@ -41,7 +41,7 @@ for i = 1:nx
         intercept_y = lineebsd('indexed').y(ind1);
         
         
-        %find indices for segements that are not primary phase
+        % find indices for segements that are not primary phase
         ind_2phaseseg = find(((lineebsd('indexed').phase(ind1(2:end)) ~= lineebsd(phase).phase(1)) + (lineebsd('indexed').phase(ind2(1:end-1)) ~= lineebsd(phase).phase(1)))==2);
 
         
@@ -62,7 +62,7 @@ for i = 1:nx
         
         
         
-        %store data
+        % store data
         lengths_x = [lengths_x; [x_end - x_start]];
     end
 end
@@ -86,7 +86,7 @@ x_pos = ((max(ebsd.x)-min(ebsd.x))/ny  .*  [1:nx]) - (max(ebsd.x)-min(ebsd.x))/n
 lengths_y = [];
 for i = 1:ny
     
-    %get data along line
+    % get data along line
     stepsize = ebsd.y(2)-ebsd.y(1);
     stepsize = 0.01;
     y_line = [0:stepsize:max(ebsd.y)]';
@@ -94,13 +94,13 @@ for i = 1:ny
     lineebsd = ebsd(findByLocation(ebsd,[x_line y_line]));
     if isempty(lineebsd(phase)) == 0
         ind = find(lineebsd('indexed').phase == lineebsd(phase).phase(1)); %indices of primary phase
-        %preallocate orientaion vector
+        % preallocate orientaion vector
         ori = orientation('Euler',NaN(size(lineebsd('indexed'))),NaN(size(lineebsd('indexed'))),NaN(size(lineebsd('indexed'))),lineebsd(phase).CS,specimenSymmetry(crystal));
         ori(ind) = lineebsd(phase).orientations;%orientations of primary phase along line
         ind_2phase = find((lineebsd('indexed').phase ~= lineebsd(phase).phase(1))  + (lineebsd('indexed').phase ~= 0) > 1); %indices of secondary phases
         ori(ind_2phase) = orientation('Euler',zeros(size(ind_2phase)),zeros(size(ind_2phase)),zeros(size(ind_2phase)),lineebsd(phase).CS,specimenSymmetry(crystal)); %dummy orientations for secondary phases along line
         
-        %find coordinates of intercepts
+        % find coordinates of intercepts
         angles = angle(ori(1:end-1),ori(2:end))/degree; %misorienatation angles along line
         ind1 = find(angles>cutoff);
         ind2 = ind1+1;
@@ -111,7 +111,7 @@ for i = 1:ny
         intercept_x = lineebsd('indexed').x(ind1);
         
         
-        %find indices for segements that are not primary phase
+        % find indices for segements that are not primary phase
         ind_2phaseseg = find(((lineebsd('indexed').phase(ind1(2:end)) ~= lineebsd(phase).phase(1)) + (lineebsd('indexed').phase(ind2(1:end-1)) ~= lineebsd(phase).phase(1)))==2);
         
         
@@ -132,7 +132,7 @@ for i = 1:ny
         
         
         
-        %store data
+        % store data
         lengths_y = [lengths_y; [y_end - y_start]];
     end
 end
