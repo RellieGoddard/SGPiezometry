@@ -12,7 +12,7 @@
 % * nx: The number of intercept lines, chosen based on analysis from 
 %       No_intercepts_check.m.
 % * gb_min: Minimum misorientation angle to define a grain boundary in 
-%       degrees. Used for constructing maps
+%       degrees. Used for constructing maps.
 % * sg_min: Minimum misorientation angle to define a subgrain boundary in 
 %       degrees. Only used for constructing maps.
 % * cutoff: Minimum misorientation angle to define a subgrain boundary in
@@ -30,7 +30,7 @@
 %% Additional user inputs produced by MTEX
 % * CS: Crystal symmetry class variable for all indexed phaes in EBSD map.
 % * pname: Path to data (e.g., 'C:/Users/admin/data/')
-% * fname: File name  combined with path
+% * fname: File name combined with path
 %
 % Results 
 %   An EBSD map for each analysis is outputted with a red box outlining the analysed subarea. 
@@ -73,30 +73,30 @@ cutoff = []; % Minimum misorientation for subgrain boundary (for calculation)
 phase = 'yourPhase'; % Phase to measure. Must match a phase present in CS.
 crystal = 'yourCrystalSystem'; % Crystal system of phase to measure. 
 Phase_map = 0; % Set to 1 to plot a phase map of the EBSD data. 
-Band_contrast = 0; % Set to 1 to plot a band contrast map.
+Band_contrast = 0; % Set to 1 to plot a band contrast map of the EBSD data.
 test = 0; % Set to 1 to speed up analysis when troubleshooting. 
 
 %% END OF USER INPUTS 
 
 %% Programmatically calculate other necessary variables 
 ny = nx; % Set number of intercepts in y-direction to equal number of intercepts in the x-direction.
-Mean_SG_size_area = zeros(1,10); % Creat an array to store the mean line intercept lengths in
+Mean_SG_size_area = zeros(1,10); % Creates an array to store the mean line intercept lengths in.
 
 %% Calculate and plot 
 
-% Call on the ProcessEBSD function. This function will output [enter the maps which I want it to output]
+% Call on the ProcessEBSD function. 
 [ebsd,grains,subgrains] = ProcessEBSD_fun(fname,gb_min,sg_min, CS, test, Phase_map, Band_contrast);
 
 %% Reduce the area used to mean mean line intercepts from 
 
-%Define the size of the ebsd map 
+% Define the size of the ebsd map 
 y_max = max(ebsd.y);
 x_max = max(ebsd.x);
 
 figure 
 
 for a = 0:1:9
-    %size of the reduced area 
+    % Reduce the area of the map 
     Height = y_max - a*0.1*y_max;
     Length = x_max - a*0.1*y_max;
   
@@ -119,7 +119,7 @@ end
 Mean_SG_size_area_mod = fliplr(Mean_SG_size_area);
 size =  [1,4,9,16,25,36,49,64,81,100];
 
-%% Add the percentage change 
+% Add the percentage change 
 Percent_change = zeros(1,9);
 
 for b = 1:1:10
