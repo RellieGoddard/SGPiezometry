@@ -1,7 +1,8 @@
 %% ProcessEBSD_LinearIntercepts - measures mean line intercept length
 % Rellie Goddard, July 2020
 
-% This function measures the mean line intercept length and offers the option of providing a equivalent stress from the Goddard et al. 2020 subgrain-size piezometer 
+% This function measures the mean line intercept length and offers the option of providing a 
+% equivalent stress from the Goddard et al. 2020 subgrain-size piezometer 
 
 % Required functions:
 % *ProcessEBSD_fun.m
@@ -10,32 +11,31 @@
 %% Required user inputs:
 % * nx: The number of intercept lines, chosen based on analysis from 
 %       No_intercepts_check.m.
-% * pname: Path to data (e.g., 'C:/Users/admin/data/')
-% * fname: File name with extension (e.g., 'W1066.ctf')
-% * gb_min: Grain size, used for constructing maps.
-% * sg_min: Subgrain size, used for constructing maps
-% * cutoff: Minimum misorientation angle used to define a subgrain boundary.
-%       If using recommended Goddard subgrain-size piezometer parameters,
-%       set to 1.
-% * CS: crystal symmetry. Phases have to be in the same order as the .cpr file. 
-%       Can be added manually or CS information can be obtained through using the 
-%       command 'import_wizard'. In inport_wizard choose the EBSD tab, click on the '+'
-%       botton to upload the .ctf file of intrest. Navigate through until you finish, 
-%       this will create an untitled script. Copy the '% crystal symmetry' section of
-%       the script into the section below labeled '% crystal symmetry'. 
+% * gb_min: Minimum misorientation angle to define a grain boundary in 
+%       degrees. Used for constructing maps
+% * sg_min: Minimum misorientation angle to define a subgrain boundary in 
+%       degrees. Only used for constructing maps.
+% * cutoff: Minimum misorientation angle to define a subgrain boundary in
+%       degrees. Used for piezometer calculations. Recommended value is 1.
 % * phase: Name of the phase of interest (e.g., 'Forsterite')
 % * crystal: Crystal system of the phase to be examined (e.g., 'orthorhombic')
-% * test: the choice to run a smaller area to speed up the analysis. Good for 
-%       testing if the script works, not recommended for analysis. 
-%       To run a smaller data set, set to 1. Othewise, set to 0
+% * test: When set to 1, reduces the size of the input EBSD map by taking
+%       every tenth pixel in both the horizontal and vertical direction. Can be 
+%       utilized to ensure the script runs correctly for a new sample file or for
+%       troubleshooting. During full analysis, test should be set to 0.
 % * Phase_map: To output a phase map, set to 1. Othewise, set to 0.
 % * Band_contrast: To output a band contrast map, set to 1. Otherwise, set
-%       to 0.
-% * Check_different_misorientation: To measure the mean line intercept length for a range of minimum misorientation angles, set to 1.
+%       to 0
+% * Check_different_misorientation: To measure the mean line intercept length for minimum misorientation angle between 1 and 10 degrees, set to 1.
 %       Otherwise set to 0. 
 % * SG_piezometer: To calculate equivalent stress straight from measured subgrain size, set to 1. Otherwise set to 0. 
 % * Peizometer_choice: If SG_piezometer == 1, Piezometer_choice enables the choice between the subgrain-size piezometers with, and without the 
-%        Holyoke and Kronenberg (2010) friction correct. 
+%        Holyoke and Kronenberg (2010) friction correct.
+% 
+%% Additional user inputs produced by MTEX
+% * CS: Crystal symmetry class variable for all indexed phaes in EBSD map.
+% * pname: Path to data (e.g., 'C:/Users/admin/data/')
+% * fname: File name  combined with path
 % 
 % Results: 
 %       If input Check_different_misorientation = [1], a plot of mean line intercept length (y-axis) 
@@ -48,90 +48,63 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% Data import
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
+close, clear all 
 % Specify File Names
 
-% USER INPUT: Enter file path 
-% File location 
-close all 
-clear all 
+% USER INPUT: Data inport information from MTEX
+% This information is produced automatically by the MTEX import wizard 
+% Paste in your CS, plotting conventions, pname, and fname here. 
 
-pname = 'yourPath\';
+% Specify Crystal and Specimen Symmetries 
+% crystal symmetry
+CS =  {};
+% plotting convention
+setMTEXpref('xAxisDirection','east');
+setMTEXpref('zAxisDirection','outOfPlane');
 
-% USER INPUT: Enter .ctf file name (including the .ctf)
-fname = [pname 'yourFileName'];
-
-
-%% Define the parameters 
-
-% USER INPUT: misorientation angles for SG and GS and cutoff for SG_piezometer
-% For the Goddard 2020 subgrain piezometer set sg_min and cutoff to 1 degree. 
-
-gb_min = [];
-sg_min = [];
-cutoff = []; 
+% Specify File Names 
+% path to file 
+pname = 'yourPath';
+% which file to be imported  
+fname = [pname 'yourFileName.ctf'];
 
 
-% USER INPUT: Crystal symmetry 
-CS =  {... 
-  'notIndexed',...
-  crystalSymmetry('mmm', [UnitCellLengths(?)], 'mineral', 'yourPhase', 'color', 'yourColor')};
+% USER INPUT: Required information 
 
-% USER INPUT Phase, must match that in the CS file.
+nx = []; % Number of intercept lines 
+gb_min = []; % Minimum misorientation for grain boundary (for figures)
+sg_min = []; % Minimum misorientation for subgrain boundary (for figures)
+cutoff = []; % Minimum misorientation for subgrain boundary (for calculation)
+phase = 'yourPhase'; % Phase to measure. Must match a phase present in CS.
+crystal = 'yourCrystalSystem'; % Crystal system of phase to measure. 
+Phase_map = 0; % Set to 1 to plot a phase map of the EBSD data. 
+Band_contrast = 0; % Set to 1 to plot a band contrast map.
+test = 0; % Set to 1 to speed up analysis when troubleshooting. 
+Check_different_misorientation =  0; % To run minimum misorientations used to define a 
+                                     % subgrain size boundary from 1 to 10 degrees, set to 1. Otherwise, set to 0
+SG_piezometer =[]; % if user wishes to use the same shear moduli and Burgers vector as in the subgrain-size piezometer paper then SG_piezometer = [1] will output a stress. 
+Peizometer_choice = []; % If SG_piezometer = 1, choose which piezometer to use. If using Equation 
+                        % 1, which includes the Holyoke and Kronenberg (2010) calibration then
+                        % Piezometer_choice = 1. If using Equation 2, which doesn't have the
+                        % Holyoke and Kronenberg (2010) calibration then Piezometer_choice = 2. 
+%% END OF USER INPUTS 
 
-phase = 'yourPhase';
-
-% USER INPUT: Crystal system 
-crystal = 'yourCrystalSystem';
-
-%USER INPUT: Number of intercepts
-nx = [];
-ny = nx;
-
-% USER INPUT: test 
-% To run a smaller data set, set to 1. Othewise, set to 0
-test = [];
-
-% USER INPUT: figure outputs 
-% To output either a phase map or a band contrast map, set to 1. Othewise, set to 0
-Phase_map = [];
-Band_contrast = [];
-
-
-% USER INPUT: To run minimum misorientations used to define a subgrain size boundary from 1 to 10 degrees, set to 1. Otherwise, set to 0
-Check_different_misorientation =  [];
-
-
-% USER INPUT: Use pre-chosen shear Moduli and Burgers vector to calulate
-% stress
-% if user wishes to use the same shear moduli and Burgers vector as in the 
-% Subgrain-size piezometer paper then SG_piezometer = [1] will output a stress. 
-
-SG_piezometer =[];
-
-% USER INPUT: 
-% If SG_piezometer = 1, choose which piezometer to use. If using Equation
-% 1, which includes the Holyoke and Kronenberg (2010) calibration then
-% Piezometer_choice = 1. If using Equation 2, which doesn't have the
-% Holyoke and Kronenberg (2010) calibration then Piezometer_choice = 2. 
-Peizometer_choice = []; 
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%% Run analysis 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %% Create empty arrays to store data within 
+%% Programmatically calculate other necessary variables 
+ny = nx; % Set number of intercepts in y-direction to equal number of intercepts in the x-direction.
 
+%% Create empty arrays to store data
 Mis_orientation = [];
 Subgrain_mis_ori = [];
 Lengths_X_1 =[];
 Lengths_Y_1 =[];
 
-% Call on the ProcessEBSD function. 
+
+%% Calculate and plot 
 [ebsd,grains,subgrains] = ProcessEBSD_fun(fname,gb_min,sg_min, CS, test, Phase_map, Band_contrast);
 
-
-%% Linear intercept analysis 
+% Linear intercept analysis 
 
 if Check_different_misorientation == 1
     for cutoff = 1:1:10
@@ -185,9 +158,8 @@ end
 
 
 
-
-%% plotting a historgam of each area 
-%number of bins
+% plotting a historgam of each area 
+% number of bins
 figure
 bin=15;
 
@@ -195,7 +167,7 @@ d_h = Lengths_X_1;
 d_v = Lengths_Y_1;
 d = [d_h;d_v];
 
-%calculate the arithmetic mean 
+% Calculate the arithmetic mean 
 a_mean_RG = sum(d)/length(d);
 
 % Plot linear scale histogram
