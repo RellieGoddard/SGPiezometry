@@ -71,7 +71,7 @@ setMTEXpref('zAxisDirection','outOfPlane');
 % path to file 
 pname = 'yourPath';
 % which file to be imported 
-fname = [pname 'yourFileName'];
+fname = [pname 'yourFileName.ctf'];
 
 
 %% USER INPUT: Required information 
@@ -79,7 +79,6 @@ nx = []; % Number of intercept lines
 Int_max = []; % Number of times to increase the step-size
 title_text = 'yourTitle'; % Title for figures 
 header_size = []; % Number of rows in header of CTF 
-phase = 'yourPhase';
 gb_min = []; % Minimum misorientation for grain boundary (for figures)
 sg_min = []; % Minimum misorientation for subgrain boundary (for figures)
 cutoff = []; % Minimum misorientation for subgrain boundary (for calculation)
