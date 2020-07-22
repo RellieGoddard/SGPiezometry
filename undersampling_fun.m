@@ -1,19 +1,19 @@
 %% ProcessEBSD_fun - imports and processes EBSD data 
 % Rellie Goddard, July 2020
 
-function [fname_new, stepx_all, Step_size_SG_size] = undersampling_fun(Int_max, dirname, sample_name, header_size,gb_min,sg_min,test, Phase_map, Band_contrast, nx, ny, cutoff, phase, crystal,CS);
+function [fname_new, stepx_all, Step_size_SG_size] = undersampling_fun(Int_max, sampname, header_size,gb_min,sg_min,test, Phase_map, Band_contrast, nx, ny, cutoff, phase, crystal,CS);
 
 Step_size_SG_size = [];
 stepx_all = [];
 
 %%%%%% User Inputs%%%%%%
 for Int = 1:1:Int_max
-fname_new = [sample_name '_int' num2str(Int)];
+fname_new = [sampname '_int' num2str(Int)];
 
 %%%%%%%%%%%%%%%%%%%%%%%%%
 
 
-Input_CTF = [dirname sample_name '.ctf'];
+Input_CTF = [sampname '.ctf'];
 data = importdata(Input_CTF,';');
 
 %Original numbers of rows and columns
