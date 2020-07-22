@@ -36,8 +36,8 @@
 %
 %% Additional user inputs produced by MTEX
 % * CS: Crystal symmetry class variable for all indexed phaes in EBSD map.
-% * dirname: Path to data (e.g., 'C:/Users/admin/data/')
-% * sample_name: File name with no extension (e.g., 'W1066')
+% * pname: Path to data (e.g., 'C:/Users/admin/data/')
+% * fname: File name  combined with path
 %
 %% Results
 % A figure showing the Intercept Variation Factor plotted against the number 
@@ -68,10 +68,10 @@ setMTEXpref('xAxisDirection','east');
 setMTEXpref('zAxisDirection','outOfPlane');
 
 % Specify File Names 
-% path to files 
-dirname = 'yourPath';
-% which files to be imported 
-sample_name = 'yourFileName';
+% path to file 
+pname = 'yourPath';
+% which file to be imported 
+fname = [pname 'yourFileName'];
 
 
 %% USER INPUT: Required information 
@@ -92,12 +92,12 @@ test = 0; % Set to 1 to speed up analysis when troubleshooting.
 %% END OF USER INPUTS 
 
 %% Programmatically calculate other necessary variables 
-Input_CTF = [dirname sample_name '.ctf'];
-A = importdata(Input_CTF);
+temp = split(fname, {'/','.'});
+sampname = temp{end-1}; % Extract file name with no extension 
 ny = nx; % Set number of intercepts in y-direction to equal number of intercepts in the x-direction.
 
 %% Calculate and plot 
-[fname_new, stepx_all, Step_size_SG_size] = undersampling_fun(Int_max, dirname, sample_name, header_size,gb_min,sg_min,test, Phase_map, Band_contrast, nx, ny, cutoff, phase, crystal, CS);
+[fname_new, stepx_all, Step_size_SG_size] = undersampling_fun(Int_max, sampname, header_size,gb_min,sg_min,test, Phase_map, Band_contrast, nx, ny, cutoff, phase, crystal, CS);
 
 close all 
 
@@ -107,4 +107,4 @@ figure
     set(gca,'fontsize',15);
     ylabel('Intercept variation factor ,\bf\lambda\rm/\bf\lambda\rm_b_e_s_t', 'FontSize',15);
     xlabel('Pixels per intercept, \bf\lambda\rm_b_e_s_t/step size', 'FontSize', 15);
-    title(Image_title, 'FontSize', 15)
+    title(title_text, 'FontSize', 15)
