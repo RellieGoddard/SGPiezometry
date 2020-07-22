@@ -8,28 +8,28 @@
 % *LinearIntercepts_fun.m
 
 % Required user inputs:
-
-% * pname: Path to data (e.g., 'C:/Users/admin/data/')
-% * fname: File name with extension (e.g., 'W1066.ctf')
-% * gb_min: Grain size, used for constructing maps.
-% * sg_min: Subgrain size, used for constructing maps
-% * cutoff: Minimum misorientation angle used to define a subgrain boundary.
-%       If using recommended Goddard subgrain-size piezometer parameters,
-%       set to 1.
-% * CS: crystal symmetry. Phases have to be in the same order as the .cpr file. 
-%       Can be added manually or CS information can be obtained through using the 
-%       command 'import_wizard'. In inport_wizard choose the EBSD tab, click on the '+'
-%       botton to upload the .ctf file of intrest. Navigate through until you finish, 
-%       this will create an untitled script. Copy the '% crystal symmetry' section of
-%       the script into the section below labeled '% crystal symmetry'. 
+% * nx: The number of intercept lines, chosen based on analysis from 
+%       No_intercepts_check.m.
+% * gb_min: Minimum misorientation angle to define a grain boundary in 
+%       degrees. Used for constructing maps
+% * sg_min: Minimum misorientation angle to define a subgrain boundary in 
+%       degrees. Only used for constructing maps.
+% * cutoff: Minimum misorientation angle to define a subgrain boundary in
+%       degrees. Used for piezometer calculations. Recommended value is 1.
 % * phase: Name of the phase of interest (e.g., 'Forsterite')
 % * crystal: Crystal system of the phase to be examined (e.g., 'orthorhombic')
+% * test: When set to 1, reduces the size of the input EBSD map by taking
+%       every tenth pixel in both the horizontal and vertical direction. Can be 
+%       utilized to ensure the script runs correctly for a new sample file or for
+%       troubleshooting. During full analysis, test should be set to 0.
 % * nx_max: The maximum number of intercepts that you want to test (recommended to start at either 30 or 40)
 % * include_low: The choice of if you want to test very low number of intercepts (1-9). To include set to 1. Othewise, set to 0.
-% * test: the choice to run a smaller area to speed up the analysis. Good for 
-%       testing if the script works, not recommended for analysis. 
-%       To run a smaller data set, set to 1. Othewise, set to 0
 %
+%% Additional user inputs produced by MTEX
+% * CS: Crystal symmetry class variable for all indexed phaes in EBSD map.
+% * pname: Path to data (e.g., 'C:/Users/admin/data/')
+% * fname: File name  combined with path
+% 
 % Results: 
 %   figures showing the line intercepts on top of EBSD data for each iteration, a figure showing the mean line intercept length against the No. of
 %   intercepts, and a figure showing the change in mean line intercept length relative to last
@@ -40,55 +40,40 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% Data import
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-close all 
-clear all 
+close, clear all 
 
-% Specify File Names
+% USER INPUT: Data inport information from MTEX
+% This information is produced automatically by the MTEX import wizard 
+% Paste in your CS, plotting conventions, pname, and fname here. 
 
-% USER INPUT: Enter file path 
-% File location 
-pname = 'yourPath\';
+% Specify Crystal and Specimen Symmetries 
+% crystal symmetry
+CS =  {};
+% plotting convention
+setMTEXpref('xAxisDirection','east');
+setMTEXpref('zAxisDirection','outOfPlane');
 
-% USER INPUT: Enter .ctf file name (including the .ctf)
-
+% Specify File Names 
+% path to file 
+pname = 'yourPath';
+% which file to be imported  
 fname = [pname 'yourFileName.ctf'];
 
-% USER INPUT: misorientation angles for SG and GS and cutoff for SG_piezometer
-% For the Goddard 2020 subgrain piezometer set sg_min and cutoff to 1 degree. 
+%% USER INPUT: Required information 
+nx_max = []; % Max number of intercepts to try. Must be multiple of 10. Suggested starting value, 30 or 40
+gb_min = []; % Minimum misorientation for grain boundary (for figures)
+sg_min = []; % Minimum misorientation for subgrain boundary (for figures)
+cutoff = []; % Minimum misorientation for subgrain boundary (for calculation)
+phase = 'yourPhase'; % Phase to measure. Must match a phase present in CS.
+crystal = 'yourCrystalSystem'; % Crystal system of phase to measure. 
+test = 0; % Set to 1 to speed up analysis when troubleshooting. 
+include_low = []; to include analysis, set to 1. Otherwise, set to 0
 
-gb_min = [];
-sg_min = [];
-cutoff =  [];
+%% END OF USER INPUTS 
 
-% USER INPUT: Crystal symmetry 
-CS =  {... 
-  'notIndexed',...
-  crystalSymmetry('mmm', [UnitCellLengths(?)], 'mineral', 'yourPhase', 'color', 'yourColor')};
+%% Calculate and plot
 
-% USER INPUT Phase, must match that in the CS file.
-phase = 'yourPhase';
-
-% USER INPUT: Crystal system 
-crystal = 'yourCrystalSystem';
-
-
-% USER INPUT: Max number of intercepts to try. Must be multiple of 10. Suggested starting value, 30 or 40
-nx_max = [];
-
-% USER INPUT: test 
-% To run a smaller data set, set to 1. Othewise, set to 0
-test = [];
-
-% USER INPUT: to include analysis, set to 1. Otherwise, set to 0
-include_low = []; 
-
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%% Run test 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-% create an array to keep data in
-if include_low
+if include_low % create an array to keep data in
     X1 = [1:1:9]';
     X2 = 10.*[1:1:(nx_max/10)]';
     X = [X1;X2];
@@ -100,7 +85,7 @@ else
 end
 
 
-%%  Call on the ProcessEBSD function. This function will output [enter the maps which I want it to output]
+%  Call on the ProcessEBSD function. This function will output [enter the maps which I want it to output]
 [ebsd,grains,subgrains] = ProcessEBSD_fun(fname,gb_min,sg_min, CS, test, 0, 0);
 
 if include_low
@@ -142,7 +127,7 @@ else
 end 
     
 
-%% plot the figure 
+% Plot figure 
     figure
     scatter(X,Y,40, 'filled', 'r');
     hold on 
