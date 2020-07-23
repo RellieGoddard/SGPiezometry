@@ -1,5 +1,5 @@
 %% ProcessEBSD_fun - imports and processes EBSD data 
-% Rellie Goddard, July 2020
+% Rellie M. Goddard, July 2020
 
 function [fname_new, stepx_all, Step_size_SG_size] = undersampling_fun(Int_max, sampname, header_size,gb_min,sg_min,test, Phase_map, Band_contrast, nx, ny, cutoff, phase, crystal,CS);
 
