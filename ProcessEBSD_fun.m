@@ -1,23 +1,15 @@
 %% ProcessEBSD_fun - imports and processes EBSD data 
-% Rellie Goddard, July 2020
+% Rellie M. Goddard, July 2020
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 function [ebsd,grains,subgrains] = ProcessEBSD_fun(fullname, gb_min, sg_min, CS, test, Phase_map, Band_contrast)
-%% Specify Crystal and Specimen Symmetries
 
-% plotting convention
-plotx2east
-plotzIntoPlane
 
-%% Import the Data
-% create an EBSD variable containing the data
-% can change to ctf file 
+% Create an EBSD variable containing the data
 ebsd = loadEBSD(fullname,CS,'interface','ctf','convertEuler2SpatialReferenceFrame');
 ebsd_orig = ebsd; %a backup of the original data
 
 if test 
-    
-    %Reduce size data set for testing
     ebsd = reduce(ebsd,10);
 end 
 
