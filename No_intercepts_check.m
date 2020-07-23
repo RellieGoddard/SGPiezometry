@@ -8,8 +8,7 @@
 % *LinearIntercepts_fun.m
 
 % Required user inputs:
-% * nx: The number of intercept lines, chosen based on analysis from 
-%       No_intercepts_check.m.
+% * nx_max: The maximum number of intercepts that you want to test (recommended to start at either 30 or 40)
 % * gb_min: Minimum misorientation angle to define a grain boundary in 
 %       degrees. Used for constructing maps
 % * sg_min: Minimum misorientation angle to define a subgrain boundary in 
@@ -22,7 +21,6 @@
 %       every tenth pixel in both the horizontal and vertical direction. Can be 
 %       utilized to ensure the script runs correctly for a new sample file or for
 %       troubleshooting. During full analysis, test should be set to 0.
-% * nx_max: The maximum number of intercepts that you want to test (recommended to start at either 30 or 40)
 % * include_low: The choice of if you want to test very low number of intercepts (1-9). To include set to 1. Othewise, set to 0.
 %
 %% Additional user inputs produced by MTEX
