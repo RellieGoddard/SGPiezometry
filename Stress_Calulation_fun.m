@@ -1,7 +1,5 @@
-%% ProcessEBSD_fun - imports and processes EBSD data 
-% Rellie Goddard, July 2020
-% Create a function in order to get the equivalent stress from a subgrain
-% size. 
+%% Equivalent_stress function calulates the equivalent stress using the Goddard et al. 2020 subgrain-size piezometer 
+% Rellie M. Goddard, July 2020
 function [Equivalent_stress] = Stress_Calulation_fun(phase,Piezometer_choice,a_mean_RG)
 
 if Piezometer_choice == 1
