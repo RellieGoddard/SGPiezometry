@@ -1,5 +1,5 @@
 %% ProcessEBSD_LinearIntercepts - measures mean line intercept length
-% Rellie Goddard, July 2020
+% Rellie M. Goddard, July 2020
 
 % This function measures the mean line intercept length and offers the option of providing a 
 % equivalent stress from the Goddard et al. 2020 subgrain-size piezometer 
@@ -138,6 +138,7 @@ if Check_different_misorientation == 1
     hold on 
     ylim = ([0 2*ylim_old]);
     hold on 
+    
     % Add labels
     xlabel('Minimum misorientation angle ({\circ})')
     ylabel('\it\lambda\it (\mum)')
@@ -158,8 +159,8 @@ end
 
 
 
-% plotting a historgam of each area 
-% number of bins
+% Plot histogram of line intercepts 
+% Number of bins
 figure
 bin=15;
 
