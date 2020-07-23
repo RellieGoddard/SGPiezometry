@@ -24,9 +24,9 @@
 % * include_low: The choice of if you want to test very low number of intercepts (1-9). To include set to 1. Othewise, set to 0.
 %
 %% Additional user inputs produced by MTEX
-% * CS: Crystal symmetry class variable for all indexed phaes in EBSD map.
+% * CS: Crystal symmetry class variable for all indexed phases in EBSD map.
 % * pname: Path to data (e.g., 'C:/Users/admin/data/')
-% * fname: File name  combined with path
+% * fname: File name combined with path
 % 
 % Results: 
 %   Figures showing the line intercepts on top of EBSD data for each iteration, a figure showing the mean line intercept length against the no. of
