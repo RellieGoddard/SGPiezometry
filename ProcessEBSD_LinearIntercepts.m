@@ -29,7 +29,7 @@
 % * Check_different_misorientation: To measure the mean line intercept length for minimum misorientation angle between 1 and 10 degrees, set to 1.
 %       Otherwise set to 0. 
 % * SG_piezometer: To calculate equivalent stress straight from measured subgrain size, set to 1. Otherwise set to 0. 
-% * Peizometer_choice: If SG_piezometer == 1, Piezometer_choice enables the choice between the subgrain-size piezometers with, and without the 
+% * Piezometer_choice: If SG_piezometer == 1, Piezometer_choice enables the choice between the subgrain-size piezometers with, and without the 
 %        Holyoke and Kronenberg (2010) friction correct.
 % 
 %% Additional user inputs produced by MTEX
@@ -83,7 +83,7 @@ test = 0; % Set to 1 to speed up analysis when troubleshooting.
 Check_different_misorientation =  0; % To run minimum misorientations used to define a 
                                      % subgrain size boundary from 1 to 10 degrees, set to 1. Otherwise, set to 0
 SG_piezometer =[]; % if user wishes to use the same shear moduli and Burgers vector as in the subgrain-size piezometer paper then SG_piezometer = [1] will output a stress. 
-Peizometer_choice = []; % If SG_piezometer = 1, choose which piezometer to use. If using Equation 
+Piezometer_choice = []; % If SG_piezometer = 1, choose which piezometer to use. If using Equation 
                         % 1, which includes the Holyoke and Kronenberg (2010) calibration then
                         % Piezometer_choice = 1. If using Equation 2, which doesn't have the
                         % Holyoke and Kronenberg (2010) calibration then Piezometer_choice = 2. 
@@ -182,7 +182,7 @@ box on
 
 % Getting a stress from your the piezometer
 if SG_piezometer == 1
-[Equivalent_stress] = Stress_Calulation_fun(phase,Peizometer_choice,a_mean_RG);
+[Equivalent_stress] = Stress_Calulation_fun(phase,Piezometer_choice,a_mean_RG);
 
 % Print Von Mises Equilivant_Stress 
 disp(Equivalent_stress)
