@@ -1,5 +1,5 @@
 %% No_intercepts_check 
-% Rellie Goddard, July 2020
+% Rellie M. Goddard, July 2020
 
 % This function checks the number of intercepts required to acurately capture the subgrain-size
 
@@ -31,7 +31,7 @@
 % * fname: File name  combined with path
 % 
 % Results: 
-%   figures showing the line intercepts on top of EBSD data for each iteration, a figure showing the mean line intercept length against the No. of
+%   Figures showing the line intercepts on top of EBSD data for each iteration, a figure showing the mean line intercept length against the no. of
 %   intercepts, and a figure showing the change in mean line intercept length relative to last
 %
 % The test is successful if the measured mean line-intercept length stabilises (change in intercept length relative to last is < or = 2.5%). 
@@ -67,7 +67,7 @@ cutoff = []; % Minimum misorientation for subgrain boundary (for calculation)
 phase = 'yourPhase'; % Phase to measure. Must match a phase present in CS.
 crystal = 'yourCrystalSystem'; % Crystal system of phase to measure. 
 test = 0; % Set to 1 to speed up analysis when troubleshooting. 
-include_low = []; to include analysis, set to 1. Otherwise, set to 0
+include_low = 0; to include analysis, set to 1. Otherwise, set to 0
 
 %% END OF USER INPUTS 
 
@@ -85,7 +85,7 @@ else
 end
 
 
-%  Call on the ProcessEBSD function. This function will output [enter the maps which I want it to output]
+%  Call on the ProcessEBSD function. 
 [ebsd,grains,subgrains] = ProcessEBSD_fun(fname,gb_min,sg_min, CS, test, 0, 0);
 
 if include_low
