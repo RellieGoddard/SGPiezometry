@@ -41,7 +41,7 @@
 %
 %% Results
 % A figure showing the Intercept Variation Factor plotted against the number 
-% of pixels per intercept will be produced. See Goddard et al., 2020 for an
+% of pixels per intercept will be produced. See Goddard et al., (submitted) for an
 % explanation of the variables. 
 %
 % The test is considered successful if the measured mean intercept length
