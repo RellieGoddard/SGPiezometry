@@ -1,4 +1,4 @@
-%% Equivalent_stress function calulates the equivalent stress using the Goddard et al. submitted subgrain-size piezometer 
+%% Equivalent_stress function calulates the equivalent stress using the Goddard et al. (submitted) subgrain-size piezometer 
 % Rellie M. Goddard, July 2020
 function [Equivalent_stress] = Stress_Calulation_fun(Burgers,Shear_M,Piezometer_choice,a_mean_RG)
 
