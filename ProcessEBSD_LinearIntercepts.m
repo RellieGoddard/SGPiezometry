@@ -183,9 +183,9 @@ title(['arithmetic mean = ' num2str(round(a_mean_RG, 2)) ' \mum'])
 box on 
 
 
-% Getting a stress from your the piezometer
+% Getting a stress from the Goddard et al. (submitted) piezometer
 if SG_piezometer == 1
-[Equivalent_stress] = Stress_Calulation_fun(phase,Piezometer_choice,a_mean_RG);
+[Equivalent_stress] = Stress_Calulation_fun(Burgers,Shear_M,Piezometer_choice,a_mean_RG);
 
 % Print Von Mises Equilivant_Stress 
 disp(Equivalent_stress)
