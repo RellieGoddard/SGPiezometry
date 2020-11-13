@@ -1,5 +1,5 @@
 %% LinearIntercepts_fun - calculate linear intercepts
-% Rellie M. Goddard, Modified november 2020 
+% Rellie M. Goddard, Modified November 2020 
 
 function [Mean_Lengths_X,Mean_Lengths_Y, lengths_x, lengths_y] = LinearIntercepts_fun(ebsd,nx,ny,cutoff,phase,crystal)
 
