@@ -1,5 +1,5 @@
 %% LinearIntercepts_fun - calculate linear intercepts
-% Rellie M. Goddard, July 2020
+% Rellie M. Goddard, Modified november 2020 
 
 function [Mean_Lengths_X,Mean_Lengths_Y, lengths_x, lengths_y] = LinearIntercepts_fun(ebsd,nx,ny,cutoff,phase,crystal)
 
@@ -11,14 +11,14 @@ axesPos = subplot(2,2,1);
 plot(ebsd(phase),ebsd(phase).orientations,'parent',axesPos), hold on
 
 %decide line positions
-y_pos = ((max(ebsd.y)-min(ebsd.y))/nx  .*  [1:nx]) - (max(ebsd.y)-min(ebsd.y))/nx /2 + min(ebsd.y);
+y_pos = ((max(max(ebsd.y))-min(min(ebsd.y)))/nx  .*  [1:nx]) - (max(max(ebsd.y))-min(min(ebsd.y)))/nx /2 + min(min((ebsd.y)));
 
 lengths_x = [];
 for i = 1:nx
     
     % get data along line
     stepsize = ebsd.y(2)-ebsd.y(1);
-    x_line = [0:stepsize:max(ebsd.x)]';
+    x_line = [0:stepsize:max(max(ebsd.x))]';
     y_line = y_pos(i)*ones(size(x_line));
     lineebsd = ebsd(findByLocation(ebsd,[x_line y_line]));
     if isempty(lineebsd(phase)) == 0
@@ -81,15 +81,14 @@ axesPos = subplot(2,2,2);
 plot(ebsd(phase),ebsd(phase).orientations,'parent',axesPos), hold on
 
 %decide line positions
-x_pos = ((max(ebsd.x)-min(ebsd.x))/ny  .*  [1:nx]) - (max(ebsd.x)-min(ebsd.x))/ny /2 + min(ebsd.x);
+x_pos = ((max(max(ebsd.x))-min(min(ebsd.x)))/ny  .*  [1:nx]) - (max(max(ebsd.x))-min(min(ebsd.x)))/ny /2 + min(min(ebsd.x));
 
 lengths_y = [];
 for i = 1:ny
     
     % get data along line
     stepsize = ebsd.y(2)-ebsd.y(1);
-    stepsize = 0.01;
-    y_line = [0:stepsize:max(ebsd.y)]';
+    y_line = [0:stepsize:max(max(ebsd.y))]';
     x_line = x_pos(i)*ones(size(y_line));
     lineebsd = ebsd(findByLocation(ebsd,[x_line y_line]));
     if isempty(lineebsd(phase)) == 0
