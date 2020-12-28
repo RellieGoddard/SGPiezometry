@@ -91,7 +91,7 @@ if include_low
         ny = nx; 
         [lengths_x, lengths_y] = LinearIntercepts_fun(ebsd,nx,ny,cutoff,phase,crystal);
         d_h = lengths_x;
-        d_v = lengths_x;
+        d_v = lengths_y;
         d = [d_h;d_v];
         XY = sum(d)/length(d);
         Y(nx) = XY;
@@ -104,7 +104,7 @@ if include_low
         ny = nx;
         [lengths_x, lengths_y] = LinearIntercepts_fun(ebsd,nx,ny,cutoff,phase,crystal);
         d_h = lengths_x;
-        d_v = lengths_x;
+        d_v = lengths_y;
         d = [d_h;d_v];
         XY = sum(d)/length(d);
         nx = 9 + (nx/10)
@@ -116,7 +116,7 @@ else
         ny = nx;
         [lengths_x, lengths_y] = LinearIntercepts_fun(ebsd,nx,ny,cutoff,phase,crystal);
         d_h = lengths_x;
-        d_v = lengths_x;
+        d_v = lengths_y;
         d = [d_h;d_v];
         XY = sum(d)/length(d);
         nx = (nx/10)
