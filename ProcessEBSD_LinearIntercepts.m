@@ -154,7 +154,6 @@ if Check_different_misorientation == 1
     box on 
 
 elseif Check_different_misorientation == 0 
-    cutoff = 1
     [Mean_Lengths_X,Mean_Lengths_Y, lengths_x, lengths_y] = LinearIntercepts_fun(ebsd,nx,ny,cutoff,phase,crystal);
     Lengths_X_1 = [Lengths_X_1, lengths_x];
     Lengths_Y_1 = [Lengths_Y_1, lengths_y];
