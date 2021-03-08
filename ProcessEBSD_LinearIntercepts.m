@@ -2,7 +2,7 @@
 % Rellie M. Goddard, July 
 
 % This function measures the mean line intercept length and offers the option of providing a 
-% equivalent stress from the Goddard et al. (submitted) subgrain-size piezometer 
+% equivalent stress from the Goddard et al. (2020) subgrain-size piezometer 
 
 % Required functions:
 % *ProcessEBSD_fun.m
@@ -45,7 +45,7 @@
 %       smaller mean line intercept lengths for critical misorientation angles of < 5° than at 10°. 
 %       A figure of the intercept analysis and a histogram of the line intercept lengths including the calculated arithmetic mean. 
 %       Optional outputs included a band contrast map and a phase map if inputs Band_contrast and Phase_map both = [1].  
-%       If SG_piezometer = 1, a stress calculated from one of the Goddard et al., (submitted) subgrain-size piezometer will also be outputted. 
+%       If SG_piezometer = 1, a stress calculated from one of the Goddard et al., (2020) subgrain-size piezometer will also be outputted. 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% Data import
@@ -85,9 +85,9 @@ test = 0; % Set to 1 to speed up analysis when troubleshooting.
 Check_different_misorientation =  0; % To run minimum misorientations used to define a 
                                      % subgrain size boundary from 1 to 10 degrees, set to 1. Otherwise, set to 0
 SG_piezometer =[]; % if user wishes to use the same shear moduli and Burgers vector as in the subgrain-size piezometer paper then SG_piezometer = [1] will output a stress. 
-Piezometer_choice = []; % If value = 1, piezometric equation will be eq. 1 from Goddard et al. (submitted). If value = 2, piezometric equation will be eq. 2 from Goddard et al. (submitted)
-Burgers = []; % Burgers vector of phase of interest 
-Shear_M = []; % Shear modulus of phase of interest 
+Piezometer_choice = []; % If value = 1, piezometric equation will be eq. 1 from Goddard et al. (2020). If value = 2, piezometric equation will be eq. 2 from Goddard et al. (2020)
+Burgers = []; % Burgers vector of phase of interest. Values used in the Goddard et al. (2020) papar are: 5.1*10^-4 microns for quartz and 4.75*10^-4 microns for olivine.   
+Shear_M = []; % Shear modulus of phase of interest. Values used in the Goddard et al. (2020) paper are: 4.2*10^4 MPa (Quartz), 7.78*10^4 MPa (Fo90), and 6.26*10^4 MPa(Fo50).  
 
 
 %% END OF USER INPUTS 
@@ -182,7 +182,7 @@ title(['arithmetic mean = ' num2str(round(a_mean_RG, 2)) ' \mum'])
 box on 
 
 
-% Getting a stress from the Goddard et al. (submitted) piezometer
+% Getting a stress from the Goddard et al. (2020) piezometer
 if SG_piezometer == 1
 [Equivalent_stress] = Stress_Calulation_fun(Burgers,Shear_M,Piezometer_choice,a_mean_RG);
 
