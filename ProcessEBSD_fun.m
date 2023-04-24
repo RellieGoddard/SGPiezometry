@@ -9,8 +9,12 @@ function [ebsd,grains,subgrains] = ProcessEBSD_fun(fullname, gb_min, sg_min, CS,
 ebsd = loadEBSD(fullname,CS,'interface','ctf','convertEuler2SpatialReferenceFrame');
 ebsd_orig = ebsd; %a backup of the original data
 
-if test 
-    ebsd = reduce(ebsd,10);
+if test ~= 0
+    if test == 1
+        ebsd = reduce(ebsd,10); % Default
+    else
+        ebsd = reduce(ebsd,test); % Jack McGrath, Uni of Leeds, 2023
+    end
 end 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -24,7 +28,7 @@ ebsd = rotate(ebsd,rot);
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 % Grain detection and noise removal
-[grains,ebsd.grainId,ebsd.mis2mean] = calcGrains(ebsd,'angle',gb_min*degree);
+[grains,ebsd.grainId,ebsd.mis2mean] = calcGrains(ebsd,'angle',gb_min*degree);   %%%%%  <<<< ADD 'UnitCell' AS AN OPTION IN HERE IF THERE ARE TOO MANY POINTS FOR VORONOI
 
 % Remove wild spikes and shards
 wild = grains.grainSize == 1;
@@ -35,13 +39,13 @@ ebsd(grains(shard)).phase = 0;
 % Find small non-indexed regions to remove
 % Higher thresholds mean more of the non-indexed regions will be filled in.
 threshold = 1;
-[grains,ebsd.grainId,ebsd.mis2mean] = calcGrains(ebsd,'angle',gb_min*degree);
+[grains,ebsd.grainId,ebsd.mis2mean] = calcGrains(ebsd,'angle',gb_min*degree);   %%%%%  <<<< ADD 'UnitCell' AS AN OPTION IN HERE IF THERE ARE TOO MANY POINTS FOR VORONOI
 notIndexed = grains('notIndexed');
 toRemove = notIndexed(notIndexed.grainSize<threshold);
 ebsd(toRemove) = [];
 
 % Reconstruct grains and subgrains
-[grains,ebsd.grainId,ebsd.mis2mean] = calcGrains(ebsd,'angle',gb_min*degree);
+[grains,ebsd.grainId,ebsd.mis2mean] = calcGrains(ebsd,'angle',gb_min*degree);   %%%%%  <<<< ADD 'UnitCell' AS AN OPTION IN HERE IF THERE ARE TOO MANY POINTS FOR VORONOI
 subgrains = calcGrains(ebsd,'angle',sg_min*degree);
 
 

@@ -1,17 +1,25 @@
 %% ProcessEBSD_fun - imports and processes EBSD data 
 % Rellie M. Goddard, July 2020
 
-function [fname_new, stepx_all, Step_size_SG_size] = undersampling_fun(Int_max, sampname, header_size,gb_min,sg_min,test, Phase_map, Band_contrast, nx, ny, cutoff, phase, crystal,CS);
+function [fname_new, stepx_all, Step_size_SG_size] = undersampling_fun(Int_max, sampname, header_size,gb_min,sg_min,test, Phase_map, Band_contrast, nx, ny, cutoff, phase, crystal,CS, plot_its, dev);
 
 Step_size_SG_size = [];
 stepx_all = [];
+
+if nargin < 15
+    plot_its = 1:Int_max;
+end
+
+if nargin < 16
+    dev = 0;
+end
 
 %%%%%% User Inputs%%%%%%
 for Int = 1:1:Int_max
 fname_new = [sampname '_int' num2str(Int)];
 
 %%%%%%%%%%%%%%%%%%%%%%%%%
-
+fprintf('Checking area size %.0f/%.0f\n', Int, Int_max)
 
 Input_CTF = [sampname '.ctf'];
 data = importdata(Input_CTF,';');
@@ -56,13 +64,18 @@ data_new(header_size+1:end) = data(ind+header_size);
 
 %Write to new ctf file
 fileid = fopen([fname_new '.ctf'],'w');
-fprintf(fileid,'%s\r\n',data_new{:,:})
-fclose(fileid)
+fprintf(fileid,'%s\r\n',data_new{:,:});
+fclose(fileid);
 
 fname = [fname_new '.ctf'];
 [ebsd,grains,subgrains] = ProcessEBSD_fun(fname, gb_min, sg_min, CS, test, Phase_map, Band_contrast);
-[Mean_Lengths_X,Mean_Lengths_Y, lengths_x, lengths_y] = LinearIntercepts_fun(ebsd,nx,ny,cutoff,phase,crystal);
-
+if ismember(Int, plot_its)
+    [ebsd,grains,subgrains] = ProcessEBSD_fun(fname, gb_min, sg_min, CS, test, Phase_map, Band_contrast);
+    [Mean_Lengths_X,Mean_Lengths_Y, lengths_x, lengths_y] = LinearIntercepts_fun(ebsd,nx,ny,cutoff,phase,crystal, 1, dev);
+else
+    [ebsd,grains,subgrains] = ProcessEBSD_fun(fname, gb_min, sg_min, CS, test, 0, 0);
+    [Mean_Lengths_X,Mean_Lengths_Y, lengths_x, lengths_y] = LinearIntercepts_fun(ebsd,nx,ny,cutoff,phase,crystal, 0, dev);
+end
 d_h = lengths_x;
 d_v = lengths_y;
 d = [d_h;d_v];

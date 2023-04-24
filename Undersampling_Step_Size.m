@@ -62,32 +62,37 @@ clear, close all
 
 % Specify Crystal and Specimen Symmetries 
 % crystal symmetry
-CS =  {};
+CS =  {
+    'NotIndexed',
+    crystalSymmetry('-3m1', 'mineral', 'Quartz-new', 'color', 'light blue'),
+    crystalSymmetry('-1', 'mineral', 'Arsenopyrite', 'color', 'light green')};
 % plotting convention
 setMTEXpref('xAxisDirection','east');
 setMTEXpref('zAxisDirection','outOfPlane');
 
 % Specify File Names 
 % path to file 
-pname = 'yourPath';
-% which file to be imported 
-fname = [pname 'yourFileName.ctf'];
+pname = '/nfs/a285/homes/eejdm/SGPiezometry_Jack1/Izzy';
+% which file to be imported
+file = 'CPA2.ctf';
+fname = [pname filesep file];
 
-
+cd(pname)
 %% USER INPUT: Required information 
-nx = []; % Number of intercept lines 
-Int_max = []; % Number of times to increase the step-size
-title_text = 'yourTitle'; % Title for figures 
-header_size = []; % Number of rows in header of CTF 
-gb_min = []; % Minimum misorientation for grain boundary (for figures)
-sg_min = []; % Minimum misorientation for subgrain boundary (for figures)
-cutoff = []; % Minimum misorientation for subgrain boundary (for calculation)
-phase = 'yourPhase'; % Phase to measure. Must match a phase present in CS.
-crystal = 'yourCrystalSystem'; % Crystal system of phase to measure. 
+nx = [40]; % Number of intercept lines 
+Int_max = [10]; % Number of times to increase the step-size
+title_text = file; % Title for figures 
+header_size = [16]; % Number of rows in header of CTF 
+gb_min = [10]; % Minimum misorientation for grain boundary (for figures)
+sg_min = [2]; % Minimum misorientation for subgrain boundary (for figures)
+cutoff = [1]; % Minimum misorientation for subgrain boundary (for calculation)
+phase = 'Quartz-new'; % Phase to measure. Must match a phase present in CS.
+crystal = 'trigonal'; % Crystal system of phase to measure. 
 Phase_map = 0; % Set to 1 to plot a phase map of the EBSD data. 
 Band_contrast = 0; % Set to 1 to plot a band contrast map.
-test = 0; % Set to 1 to speed up analysis when troubleshooting. 
-
+test = 0; % Set to 1 to speed up analysis when troubleshooting.
+plot_its = []; % set the iteration numbers that you would like to plot. Keep empty to plot none, set to 10 for all
+dev = 1;
 %% END OF USER INPUTS 
 
 %% Programmatically calculate other necessary variables 
@@ -96,9 +101,9 @@ sampname = temp{end-1}; % Extract file name with no extension
 ny = nx; % Set number of intercepts in y-direction to equal number of intercepts in the x-direction.
 
 %% Calculate and plot 
-[fname_new, stepx_all, Step_size_SG_size] = undersampling_fun(Int_max, sampname, header_size,gb_min,sg_min,test, Phase_map, Band_contrast, nx, ny, cutoff, phase, crystal, CS);
+[fname_new, stepx_all, Step_size_SG_size] = undersampling_fun(Int_max, sampname, header_size,gb_min,sg_min,test, Phase_map, Band_contrast, nx, ny, cutoff, phase, crystal, CS, plot_its, dev);
 
-close all 
+%close all 
 
 figure 
     plot(Step_size_SG_size(1)./stepx_all, Step_size_SG_size/Step_size_SG_size(1),'-o', 'LineWidth', 3, 'color', [0.49 0.34 0.75], 'MarkerSize', 7);

@@ -59,36 +59,41 @@ close, clear all
 
 % Specify Crystal and Specimen Symmetries 
 % crystal symmetry
-CS =  {};
+CS =  {
+    'NotIndexed',
+    crystalSymmetry('-3m1', 'mineral', 'Quartz-new', 'color', 'light blue'),
+    crystalSymmetry('-1', 'mineral', 'Arsenopyrite', 'color', 'light green')};
 % plotting convention
 setMTEXpref('xAxisDirection','east');
 setMTEXpref('zAxisDirection','outOfPlane');
 
 % Specify File Names 
-% path to file 
-pname = 'yourPath';
-% which file to be imported  
-fname = [pname 'yourFileName.ctf'];
+% path to file
+pname = '/nfs/a285/homes/eejdm/SGPiezometry_Jack1/Izzy';
+% which file to be imported
+file = 'CPA2_again.ctf';
+fname = [pname filesep file];
 
 
 % USER INPUT: Required information 
 
-nx = []; % Number of intercept lines 
-gb_min = []; % Minimum misorientation for grain boundary (for figures)
-sg_min = []; % Minimum misorientation for subgrain boundary (for figures)
-cutoff = []; % Minimum misorientation for subgrain boundary (for calculation)
-phase = 'yourPhase'; % Phase to measure. Must match a phase present in CS.
-crystal = 'yourCrystalSystem'; % Crystal system of phase to measure. 
-Phase_map = 0; % Set to 1 to plot a phase map of the EBSD data. 
+nx = [30]; % Number of intercept lines 
+gb_min = [10]; % Minimum misorientation for grain boundary (for figures)
+sg_min = [1]; % Minimum misorientation for subgrain boundary (for figures)
+cutoff = [1]; % Minimum misorientation for subgrain boundary (for calculation)
+phase = 'Quartz-new'; % Phase to measure. Must match a phase present in CS.
+crystal = 'trigonal'; % Crystal system of phase to measure. 
+Phase_map = 1; % Set to 1 to plot a phase map of the EBSD data. 
 Band_contrast = 0; % Set to 1 to plot a band contrast map.
 test = 0; % Set to 1 to speed up analysis when troubleshooting. 
 Check_different_misorientation =  0; % To run minimum misorientations used to define a 
                                      % subgrain size boundary from 1 to 10 degrees, set to 1. Otherwise, set to 0
-SG_piezometer =[]; % if user wishes to use the same shear moduli and Burgers vector as in the subgrain-size piezometer paper then SG_piezometer = [1] will output a stress. 
-Piezometer_choice = []; % If value = 1, piezometric equation will be eq. 1 from Goddard et al. (2020). If value = 2, piezometric equation will be eq. 2 from Goddard et al. (2020)
-Burgers = []; % Burgers vector of phase of interest. Values used in the Goddard et al. (2020) papar are: 5.1*10^-4 microns for quartz and 4.75*10^-4 microns for olivine.   
-Shear_M = []; % Shear modulus of phase of interest. Values used in the Goddard et al. (2020) paper are: 4.2*10^4 MPa (Quartz), 7.78*10^4 MPa (Fo90), and 6.26*10^4 MPa(Fo50).  
-
+SG_piezometer =[1]; % if user wishes to use the same shear moduli and Burgers vector as in the subgrain-size piezometer paper then SG_piezometer = [1] will output a stress. 
+Piezometer_choice = [1]; % If value = 1, piezometric equation will be eq. 1 from Goddard et al. (2020). If value = 2, piezometric equation will be eq. 2 from Goddard et al. (2020)
+Burgers = [5.1*10^-4]; % Burgers vector of phase of interest. Values used in the Goddard et al. (2020) papar are: 5.1*10^-4 microns for quartz and 4.75*10^-4 microns for olivine.   
+Shear_M = [4.2*10^4]; % Shear modulus of phase of interest. Values used in the Goddard et al. (2020) paper are: 4.2*10^4 MPa (Quartz), 7.78*10^4 MPa (Fo90), and 6.26*10^4 MPa(Fo50).  
+plot_flg = 1;
+dev = 1;
 
 %% END OF USER INPUTS 
 
@@ -112,7 +117,7 @@ Lengths_Y_1 =[];
 if Check_different_misorientation == 1
     for cutoff = 1:1:10
       Mis_orientation = [Mis_orientation, cutoff];
-      [Mean_Lengths_X,Mean_Lengths_Y, lengths_x, lengths_y] = LinearIntercepts_fun(ebsd,nx,ny,cutoff,phase,crystal);
+      [Mean_Lengths_X,Mean_Lengths_Y, lengths_x, lengths_y] = LinearIntercepts_fun(ebsd,nx,ny,cutoff,phase,crystal, plot_flg, dev);
       store = [];
       store = [lengths_x;lengths_y];
       Subgrain_mis_ori = [Subgrain_mis_ori, (sum(store)/length(store))];
@@ -154,7 +159,7 @@ if Check_different_misorientation == 1
     box on 
 
 elseif Check_different_misorientation == 0 
-    [Mean_Lengths_X,Mean_Lengths_Y, lengths_x, lengths_y] = LinearIntercepts_fun(ebsd,nx,ny,cutoff,phase,crystal);
+    [Mean_Lengths_X,Mean_Lengths_Y, lengths_x, lengths_y] = LinearIntercepts_fun(ebsd,nx,ny,cutoff,phase,crystal, plot_flg, dev);
     Lengths_X_1 = [Lengths_X_1, lengths_x];
     Lengths_Y_1 = [Lengths_Y_1, lengths_y];
 end 
@@ -187,7 +192,7 @@ if SG_piezometer == 1
 [Equivalent_stress] = Stress_Calulation_fun(Burgers,Shear_M,Piezometer_choice,a_mean_RG);
 
 % Print Von Mises Equilivant_Stress 
-disp(Equivalent_stress)
+disp([num2str(Equivalent_stress), ' MPa'])
 end 
 
 

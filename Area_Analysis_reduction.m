@@ -54,28 +54,32 @@ close, clear all
 
 % Specify Crystal and Specimen Symmetries 
 % crystal symmetry
-CS =  {};
+CS =  {
+    crystalSymmetry('-3m1', 'mineral', 'Quartz-new', 'color', 'light blue'), ...
+    crystalSymmetry('-1', 'mineral', 'Arsenopyrite', 'color', 'light green')};
 % plotting convention
 setMTEXpref('xAxisDirection','east');
 setMTEXpref('zAxisDirection','outOfPlane');
 
 % Specify File Names 
 % path to file 
-pname = 'yourPath';
-% which file to be imported  
-fname = [pname 'yourFileName.ctf'];
+pname = '/nfs/a285/homes/eejdm/SGPiezometry_Jack1/Izzy';
+% which file to be imported
+file = 'CPA2_again.ctf';
+fname = [pname filesep file];
 
 %% USER INPUT: Required information 
-nx = []; % Number of intercept lines 
-gb_min = []; % Minimum misorientation for grain boundary (for figures)
-sg_min = []; % Minimum misorientation for subgrain boundary (for figures)
-cutoff = []; % Minimum misorientation for subgrain boundary (for calculation)
-phase = 'yourPhase'; % Phase to measure. Must match a phase present in CS.
-crystal = 'yourCrystalSystem'; % Crystal system of phase to measure. 
-Phase_map = 0; % Set to 1 to plot a phase map of the EBSD data. 
-Band_contrast = 0; % Set to 1 to plot a band contrast map of the EBSD data.
-test = 0; % Set to 1 to speed up analysis when troubleshooting. 
-
+nx = [50]; % Number of intercept lines 
+gb_min = [10]; % Minimum misorientation for grain boundary (for figures)
+sg_min = [2]; % Minimum misorientation for subgrain boundary (for figures)
+cutoff = [1]; % Minimum misorientation for subgrain boundary (for calculation)
+phase = 'Quartz-new'; % Phase to measure. Must match a phase present in CS.
+crystal = 'trigonal'; % Crystal system of phase to measure. 
+Phase_map = 1; % Set to 1 to plot a phase map of the EBSD data. 
+Band_contrast = 1; % Set to 1 to plot a band contrast map of the EBSD data.
+test = 1; % Set to 1 to speed up analysis when troubleshooting. 
+plot_its = []; % set the iteration numbers that you would like to plot. Keep empty to plot none, set to 10 for all
+dev = 1;
 %% END OF USER INPUTS 
 
 %% Programmatically calculate other necessary variables 
@@ -93,22 +97,32 @@ Mean_SG_size_area = zeros(1,10); % Creates an array to store the mean line inter
 y_max = max(ebsd.y);
 x_max = max(ebsd.x);
 
-figure 
+if plot_its == 10
+    plot_its = 0:9;
+end
 
 for a = 0:1:9
     % Reduce the area of the map 
     Height = y_max - a*0.1*y_max;
     Length = x_max - a*0.1*y_max;
   
-    plot(ebsd(phase),ebsd(phase).orientations)
-    hold on 
+    %plot(ebsd(phase),ebsd(phase).orientations)
+    %hold on 
     region = [((x_max/2)-(Length/2)) ((y_max/2)-(Height/2)) Length Height];
-    rectangle('position',region,'edgecolor','r','linewidth',2)
+    %rectangle('position',region,'edgecolor','r','linewidth',2)
     
     condition = inpolygon(ebsd,region);
     ebsd_mod = ebsd(condition);
-
-    [Mean_Lengths_X,Mean_Lengths_Y, lengths_x, lengths_y] = LinearIntercepts_fun(ebsd_mod,nx,ny,cutoff,phase,crystal);
+    
+    if ismember(a, plot_its)
+        figure
+        plot(ebsd(phase),ebsd(phase).orientations)
+        hold on
+        rectangle('position',region,'edgecolor','r','linewidth',2)
+        [Mean_Lengths_X,Mean_Lengths_Y, lengths_x, lengths_y] = LinearIntercepts_fun(ebsd_mod,nx,ny,cutoff,phase,crystal, 1, dev);
+    else
+        [Mean_Lengths_X,Mean_Lengths_Y, lengths_x, lengths_y] = LinearIntercepts_fun(ebsd_mod,nx,ny,cutoff,phase,crystal, 0, dev);
+    end
     
     d_combined = horzcat(lengths_x', lengths_y');
     Mean_SG_size_area(a+1) = (sum(d_combined)/length(d_combined));
